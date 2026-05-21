@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 150 20% 5%;
+    --foreground: 138 67% 97%;
+    --card: 140 21% 9%;
+    --card-foreground: 138 67% 97%;
+    --popover: 140 21% 9%;
+    --popover-foreground: 138 67% 97%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 150 20% 5%;
+    --secondary: 48 96% 53%;
+    --secondary-foreground: 150 20% 5%;
+    --muted: 138 24% 16%;
+    --muted-foreground: 142 70% 74%;
+    --accent: 138 24% 16%;
+    --accent-foreground: 138 67% 97%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 142 71% 45%;
+    --input: 138 24% 16%;
+    --ring: 142 71% 45%;
+    --radius: 0.5rem;
+
+    --bg-base: #0a0f0d;
+    --bg-surface: #111a14;
+    --bg-elevated: #1a2b1e;
+    --green-500: #22c55e;
+    --green-600: #16a34a;
+    --green-700: #15803d;
+    --green-glow: rgba(34, 197, 94, 0.15);
+    --yellow-400: #facc15;
+    --yellow-500: #eab308;
+    --yellow-glow: rgba(250, 204, 21, 0.12);
+    --text-primary: #f0fdf4;
+    --text-secondary: #86efac;
+    --text-muted: #4ade80;
+    --success: #22c55e;
+    --error: #ef4444;
+    --warning: #f59e0b;
+    --landing-border: rgba(34, 197, 94, 0.2);
+    --border-strong: rgba(34, 197, 94, 0.2);
+    --border-hover: rgba(34, 197, 94, 0.4);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border/20;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide {
+  opacity: 0;
+  animation: fadeSlideUp 0.35s ease forwards;
+}
+
+/* Padrao sutil de campo usado no hero da landing publica. */
+.field-pattern {
+  background-image:
+    linear-gradient(rgba(34, 197, 94, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 197, 94, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at center, transparent 0 58px, rgba(250, 204, 21, 0.08) 59px 60px, transparent 61px),
+    linear-gradient(90deg, transparent 49.5%, rgba(34, 197, 94, 0.06) 50%, transparent 50.5%);
+  background-size:
+    44px 44px,
+    44px 44px,
+    280px 280px,
+    100% 100%;
+}
+
+.landing-card {
+  background:
+    linear-gradient(180deg, rgba(26, 43, 30, 0.9), rgba(17, 26, 20, 0.96)),
+    var(--bg-surface);
+  border-color: var(--landing-border);
+}
+
+.prediction-score-input {
+  -moz-appearance: textfield;
+}
