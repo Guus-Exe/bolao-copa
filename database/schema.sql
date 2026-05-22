@@ -197,19 +197,10 @@ begin
   loop
     if rec.predicted_home_score = v_home_score
        and rec.predicted_away_score = v_away_score then
-      v_points := 10;
-    elsif sign(rec.predicted_home_score - rec.predicted_away_score)
-          = sign(v_home_score - v_away_score)
-      and (rec.predicted_home_score - rec.predicted_away_score)
-          = (v_home_score - v_away_score) then
-      v_points := 7;
-    elsif sign(rec.predicted_home_score - rec.predicted_away_score)
-          = sign(v_home_score - v_away_score)
-      and sign(v_home_score - v_away_score) <> 0 then
-      v_points := 5;
-    elsif rec.predicted_home_score = rec.predicted_away_score
-      and v_home_score = v_away_score then
       v_points := 3;
+    elsif sign(rec.predicted_home_score - rec.predicted_away_score)
+          = sign(v_home_score - v_away_score) then
+      v_points := 1;
     else
       v_points := 0;
     end if;

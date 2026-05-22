@@ -4,16 +4,45 @@ node_modules
 # Build local
 .next
 out
+dist
+build
 
-# Ambiente
-.env*.local
-.env.local
+# Ambiente - CRITICO: bloquear todos os .env
+.env
+.env.*
+!.env.example
+
+# Chaves e certificados
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+secrets/
+.secrets
 
 # Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+*.log
+
+# Testes e cobertura
+coverage/
+.nyc_output
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
 
 # Vercel
 .vercel
+
+# Turbo
+.turbo

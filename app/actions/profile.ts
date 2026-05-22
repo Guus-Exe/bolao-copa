@@ -49,7 +49,8 @@ export async function updateUsername(
     return { success: false, error: "Este apelido ja esta em uso." }
   }
 
-  const { error } = await (supabase.from("profiles") as any)
+  const { error } = await supabaseAdmin
+    .from("profiles")
     .update({ username: normalizedUsername })
     .eq("id", user.id)
 
@@ -109,7 +110,8 @@ export async function updateAvatar(
   } = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(filePath)
   const avatarUrl = `${publicUrl}?v=${Date.now()}`
 
-  const { error: profileError } = await (supabase.from("profiles") as any)
+  const { error: profileError } = await supabaseAdmin
+    .from("profiles")
     .update({ avatar_url: avatarUrl })
     .eq("id", user.id)
 

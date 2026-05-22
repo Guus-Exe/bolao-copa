@@ -37,7 +37,7 @@ export async function sendMessage(
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return { success: false, error: "Voce precisa estar logado." }
+    return { success: false, error: "Você precisa estar logado." }
   }
 
   const { data: profileData } = await supabase
@@ -48,10 +48,12 @@ export async function sendMessage(
   const profile = profileData as { is_paid: boolean } | null
 
   if (!profile?.is_paid) {
-    return { success: false, error: "Seu acesso ainda nao foi liberado." }
+    return { success: false, error: "Seu acesso ainda não foi liberado." }
   }
 
-  const { data, error } = await (supabase.from("chat_messages") as any)
+  // Usa supabaseAdmin para inferencia de tipos correta; autenticacao ja foi validada acima.
+  const { data, error } = await supabaseAdmin
+    .from("chat_messages")
     .insert({
       user_id: user.id,
       content: sanitized.data.content
@@ -60,7 +62,7 @@ export async function sendMessage(
     .single()
 
   if (error || !data) {
-    return { success: false, error: "Nao foi possivel enviar a mensagem." }
+    return { success: false, error: "Não foi possível enviar a mensagem." }
   }
 
   return { success: true, data: data as ChatMessage }
@@ -72,7 +74,7 @@ export async function getChatProfile(
   const parsed = userIdSchema.safeParse(userId)
 
   if (!parsed.success) {
-    return { success: false, error: "Usuario invalido." }
+    return { success: false, error: "Usuário inválido." }
   }
 
   const supabase = createServerClient()
@@ -81,7 +83,7 @@ export async function getChatProfile(
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return { success: false, error: "Voce precisa estar logado." }
+    return { success: false, error: "Você precisa estar logado." }
   }
 
   const { data: requesterData } = await supabase
@@ -92,18 +94,18 @@ export async function getChatProfile(
   const requester = requesterData as { is_paid: boolean } | null
 
   if (!requester?.is_paid) {
-    return { success: false, error: "Seu acesso ainda nao foi liberado." }
+    return { success: false, error: "Seu acesso ainda não foi liberado." }
   }
 
   // Busca server-side para nao depender da RLS de profiles no client.
-  const { data, error } = await supabaseAdmin
-    .from("profiles")
+    const { data, error } = await supabaseAdmin
+      .from("profiles")
     .select("username, avatar_url")
     .eq("id", parsed.data)
     .single()
 
   if (error || !data) {
-    return { success: false, error: "Perfil nao encontrado." }
+    return { success: false, error: "Perfil não encontrado." }
   }
 
   return {

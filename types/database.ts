@@ -63,6 +63,7 @@ export type Database = {
           home_score: number | null
           away_score: number | null
           is_finished: boolean
+          api_fixture_id: number | null
           created_at: string
         }
         Insert: {
@@ -77,6 +78,7 @@ export type Database = {
           home_score?: number | null
           away_score?: number | null
           is_finished?: boolean
+          api_fixture_id?: number | null
           created_at?: string
         }
         Update: {
@@ -91,6 +93,7 @@ export type Database = {
           home_score?: number | null
           away_score?: number | null
           is_finished?: boolean
+          api_fixture_id?: number | null
           created_at?: string
         }
         Relationships: []

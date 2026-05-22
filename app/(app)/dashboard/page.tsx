@@ -27,10 +27,10 @@ export default async function DashboardPage() {
           Acesso pendente
         </p>
         <h1 className="mt-2 font-[family-name:var(--font-display)] text-5xl tracking-wide">
-          Aguarde a liberacao do admin
+          Aguarde a liberaçãoo do admin
         </h1>
         <p className="mt-3 max-w-2xl text-[var(--text-secondary)]">
-          Sua conta ja existe, mas ainda nao foi marcada como paga. Quando o
+          Sua conta já existe, mas ainda não foi marcada como paga. Quando o
           admin liberar, os jogos e palpites aparecem aqui.
         </p>
       </section>
@@ -55,13 +55,13 @@ export default async function DashboardPage() {
     <section className="space-y-6">
       <div>
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
-          Area do participante
+          Área do participante
         </p>
         <h1 className="mt-2 font-[family-name:var(--font-display)] text-5xl tracking-wide">
           Jogos da Copa
         </h1>
         <p className="mt-2 text-[var(--text-secondary)]">
-          Faca seus palpites ate 1 hora antes de cada partida.
+          Faça seus palpites até 1 hora antes de cada partida.
         </p>
       </div>
 

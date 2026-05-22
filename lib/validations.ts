@@ -61,7 +61,11 @@ export const adminGameSchema = z.object({
     .trim()
     .max(20, "O grupo pode ter no maximo 20 caracteres.")
     .optional()
-    .nullable()
+    .nullable(),
+  api_fixture_id: z.preprocess(
+    (val) => (val === "" || val === null || val === undefined ? null : Number(val)),
+    z.number().int().positive().optional().nullable()
+  )
 })
 
 export const adminResultSchema = z.object({

@@ -49,7 +49,7 @@ export default async function ProfilePage() {
           Perfil
         </h1>
         <p className="mt-2 max-w-2xl text-[var(--text-secondary)]">
-          Ajuste sua identidade no bolao e acompanhe seus numeros pessoais.
+          Ajuste sua identidade no bolão e acompanhe seus numeros pessoais.
         </p>
       </div>
 
@@ -60,7 +60,7 @@ export default async function ProfilePage() {
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <UsernameForm username={profile.username} />
-        <AccountInfo email={user.email ?? "Email nao informado"} />
+        <AccountInfo email={user.email ?? "Email não informado"} />
       </div>
 
       <ProfileStats entry={rankingEntry} />

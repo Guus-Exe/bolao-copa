@@ -50,9 +50,10 @@ export function GameForm({ open, game, onClose, onSaved }: GameFormProps) {
   async function onSubmit(values: GameFormValues) {
     setError(null)
 
+    // Force the input to be interpreted as UTC-3 (Brasília)
     const payload = {
       ...values,
-      match_date: new Date(values.match_date).toISOString()
+      match_date: new Date(values.match_date + "-03:00").toISOString()
     }
     const result = game
       ? await updateGame(game.id, payload)
@@ -101,7 +102,7 @@ export function GameForm({ open, game, onClose, onSaved }: GameFormProps) {
             </Field>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
             <Field label="Data e hora" error={form.formState.errors.match_date?.message}>
               <Input type="datetime-local" {...form.register("match_date")} />
             </Field>
@@ -119,6 +120,9 @@ export function GameForm({ open, game, onClose, onSaved }: GameFormProps) {
             </Field>
             <Field label="Grupo" error={form.formState.errors.group_name?.message}>
               <Input placeholder="A, B, C..." {...form.register("group_name")} />
+            </Field>
+            <Field label="ID API (Opcional)" error={form.formState.errors.api_fixture_id?.message}>
+              <Input type="number" placeholder="Ex: 1045622" {...form.register("api_fixture_id")} />
             </Field>
           </div>
 
@@ -168,13 +172,15 @@ function getDefaultValues(game: Game | null): GameFormValues {
     away_flag: game?.away_flag ?? "",
     match_date: game ? toDatetimeLocal(game.match_date) : "",
     stage: (game?.stage as GameFormValues["stage"]) ?? "grupo",
-    group_name: game?.group_name ?? ""
+    group_name: game?.group_name ?? "",
+    api_fixture_id: game?.api_fixture_id ?? null
   }
 }
 
 function toDatetimeLocal(value: string) {
   const date = new Date(value)
-  const offset = date.getTimezoneOffset()
-  const local = new Date(date.getTime() - offset * 60 * 1000)
+  // Convert absolute UTC time to UTC-3 display time
+  const utc3Time = date.getTime() - 3 * 60 * 60 * 1000
+  const local = new Date(utc3Time)
   return local.toISOString().slice(0, 16)
 }

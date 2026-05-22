@@ -32,7 +32,7 @@ export default async function RankingPage() {
     <section className="space-y-8">
       <div>
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
-          Classificacao geral
+          Classificação geral
         </p>
         <h1 className="mt-2 bg-gradient-to-r from-green-300 via-green-100 to-yellow-300 bg-clip-text font-[family-name:var(--font-display)] text-6xl tracking-wide text-transparent md:text-7xl">
           Ranking
@@ -44,7 +44,7 @@ export default async function RankingPage() {
 
       {error && isAdmin ? (
         <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-100">
-          Nao foi possivel carregar o ranking. Verifique perfis, palpites e jogos no Supabase.
+          Não foi possivel carregar o ranking. Verifique perfis, palpites e jogos no Supabase.
         </div>
       ) : null}
 
@@ -56,13 +56,13 @@ export default async function RankingPage() {
             Demais participantes
           </h2>
           <p className="text-sm text-[var(--text-secondary)]">
-            A partir do 5° lugar, a classificacao continua na tabela.
+            A partir do 5° lugar, a classificação continua na tabela.
           </p>
         </div>
         <RankingTable
           entries={remainingRanking}
           currentUserId={currentUserId}
-          emptyMessage="Nenhum participante fora da premiacao por enquanto."
+          emptyMessage="Nenhum participante fora da premiação por enquanto."
         />
       </div>
 

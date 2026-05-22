@@ -42,19 +42,38 @@ export function GameDashboard({ games, predictions }: GameDashboardProps) {
   }, [savedPredictions])
 
   const filteredGames = useMemo(() => {
-    return games.filter((game) => {
-      const hasPrediction = predictionByGameId.has(game.id)
-      const matchesStage =
-        stageFilter === "todos" ||
-        (stageFilter === "grupos" && game.stage === "grupo") ||
-        (stageFilter === "mata-mata" && game.stage !== "grupo")
-      const matchesPrediction =
-        predictionFilter === "todos" ||
-        (predictionFilter === "palpitados" && hasPrediction) ||
-        (predictionFilter === "nao-palpitados" && !hasPrediction)
+    const now = new Date().getTime()
 
-      return matchesStage && matchesPrediction
-    })
+    return games
+      .filter((game) => {
+        const hasPrediction = predictionByGameId.has(game.id)
+        const matchesStage =
+          stageFilter === "todos" ||
+          (stageFilter === "grupos" && game.stage === "grupo") ||
+          (stageFilter === "mata-mata" && game.stage !== "grupo")
+        const matchesPrediction =
+          predictionFilter === "todos" ||
+          (predictionFilter === "palpitados" && hasPrediction) ||
+          (predictionFilter === "nao-palpitados" && !hasPrediction)
+
+        return matchesStage && matchesPrediction
+      })
+      .sort((a, b) => {
+        const timeA = new Date(a.match_date).getTime()
+        const timeB = new Date(b.match_date).getTime()
+
+        const isClosedA = now >= timeA - 60 * 60 * 1000
+        const isClosedB = now >= timeB - 60 * 60 * 1000
+
+        if (isClosedA && !isClosedB) return 1
+        if (!isClosedA && isClosedB) return -1
+
+        if (!isClosedA && !isClosedB) {
+          return timeA - timeB
+        }
+
+        return timeB - timeA
+      })
   }, [games, predictionByGameId, predictionFilter, stageFilter])
 
   const gamesByStage = useMemo(() => {

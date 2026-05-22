@@ -21,20 +21,9 @@ export function calculatePoints(prediction: ScorePair, result: ScorePair) {
   const predictedOutcome = getOutcome(prediction)
   const resultOutcome = getOutcome(result)
 
-  if (predictedOutcome !== resultOutcome) {
-    return SCORING_RULES.WRONG
+  if (predictedOutcome === resultOutcome) {
+    return SCORING_RULES.CORRECT_WINNER
   }
 
-  if (resultOutcome === 0) {
-    return SCORING_RULES.CORRECT_DRAW
-  }
-
-  const predictedDiff = Math.abs(prediction.homeScore - prediction.awayScore)
-  const resultDiff = Math.abs(result.homeScore - result.awayScore)
-
-  if (predictedDiff === resultDiff) {
-    return SCORING_RULES.CORRECT_WINNER_AND_DIFF
-  }
-
-  return SCORING_RULES.CORRECT_WINNER
+  return SCORING_RULES.WRONG
 }

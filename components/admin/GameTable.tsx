@@ -1,10 +1,10 @@
 "use client"
 
-import { CalendarPlus, Edit3, ListChecks, Trash2 } from "lucide-react"
+import { CalendarPlus, Edit3, ListChecks, Trash2, RefreshCw } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useMemo, useState, type ReactNode } from "react"
 
-import { deleteGame } from "@/app/actions/admin"
+import { deleteGame, syncGameScore } from "@/app/actions/admin"
 import { GameForm } from "@/components/admin/GameForm"
 import { ResultModal } from "@/components/admin/ResultModal"
 import { Button } from "@/components/ui/button"
@@ -89,6 +89,22 @@ export function GameTable({ games }: GameTableProps) {
     showToast("Jogo excluido com sucesso.")
   }
 
+  async function handleSync(game: Game) {
+    if (!game.api_fixture_id) return
+    setError(null)
+    setToast("Sincronizando...")
+    
+    const result = await syncGameScore(game.id)
+    
+    if (!result.success) {
+      setError(result.error)
+      setToast(null)
+      return
+    }
+    
+    showToast("Placar sincronizado e pontos calculados!")
+  }
+
   return (
     <section className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -164,6 +180,11 @@ export function GameTable({ games }: GameTableProps) {
                     <IconButton label="Editar" onClick={() => openEditForm(game)}>
                       <Edit3 size={16} />
                     </IconButton>
+                    {game.api_fixture_id && !game.is_finished ? (
+                      <IconButton label="Sincronizar da API" onClick={() => handleSync(game)} className="text-emerald-400 hover:text-emerald-300">
+                        <RefreshCw size={16} />
+                      </IconButton>
+                    ) : null}
                     <IconButton label="Resultado" onClick={() => setResultGame(game)}>
                       <ListChecks size={16} />
                     </IconButton>

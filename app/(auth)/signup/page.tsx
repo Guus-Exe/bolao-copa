@@ -3,18 +3,21 @@ import Link from "next/link"
 import { signUp } from "@/app/actions/auth"
 import { AuthForm } from "@/components/auth/AuthForm"
 
-export default function SignupPage({
-  searchParams
-}: {
-  searchParams?: { message?: string }
-}) {
+type Props = {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export default async function SignupPage(props: Props) {
+  const searchParams = await props.searchParams
+  const message = typeof searchParams.message === "string" ? searchParams.message : undefined
+
   return (
     <AuthForm
       title="Criar conta"
       description="Cadastre-se para aguardar a liberacao do admin."
       action={signUp}
       buttonLabel="Criar conta"
-      message={searchParams?.message}
+      message={message}
       footer={
         <>
           Ja tem conta?{" "}

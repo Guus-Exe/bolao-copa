@@ -13,6 +13,7 @@ import {
   adminResultSchema,
   adminUserToggleSchema
 } from "@/lib/validations"
+import { fetchFixtures } from "@/lib/api-football"
 import type { Game, Prediction, Profile } from "@/types"
 
 type ActionResult<T = void> =
@@ -81,7 +82,8 @@ function normalizeGameInput(input: unknown) {
     group_name:
       typeof data.group_name === "string" && data.group_name.trim().length > 0
         ? data.group_name.trim()
-        : null
+        : null,
+    api_fixture_id: data.api_fixture_id ?? null
   }
 }
 
@@ -335,7 +337,7 @@ export async function insertResult(
   return { success: true, data: { updated: pointsResult.data.updated } }
 }
 
-async function recalculateGamePoints(
+export async function recalculateGamePoints(
   gameId: string,
   homeScore: number,
   awayScore: number
@@ -554,3 +556,61 @@ export async function getUserPredictionsForAdmin(
 
   return { success: true, data: (data ?? []) as AdminPrediction[] }
 }
+
+export async function syncGameScore(gameId: string): Promise<ActionResult<{ updated: number }>> {
+  const admin = await requireAdmin()
+
+  if (!admin.success) {
+    return admin
+  }
+
+  const parsed = idSchema.safeParse(gameId)
+  if (!parsed.success) {
+    return { success: false, error: "Jogo invalido." }
+  }
+
+  const { data: game, error } = await supabaseAdmin
+    .from("games")
+    .select("*")
+    .eq("id", parsed.data)
+    .single()
+
+  if (error || !game) {
+    return { success: false, error: "Jogo nao encontrado." }
+  }
+
+  if (!game.api_fixture_id) {
+    return { success: false, error: "Este jogo nao possui ID da API-Football vinculado." }
+  }
+
+  try {
+    const fixtures = await fetchFixtures([game.api_fixture_id])
+    if (fixtures.length === 0) {
+      return { success: false, error: "Partida nao encontrada na API." }
+    }
+
+    const fixtureData = fixtures[0]
+    const status = fixtureData.fixture.status.short
+
+    // FT = Full Time, AET = After Extra Time, PEN = Penalties
+    if (!["FT", "AET", "PEN"].includes(status)) {
+      return {
+        success: false,
+        error: `A partida ainda nao foi finalizada. Status atual: ${status}`
+      }
+    }
+
+    const homeScore = fixtureData.goals.home
+    const awayScore = fixtureData.goals.away
+
+    if (homeScore === null || awayScore === null) {
+      return { success: false, error: "Placar final ainda nao disponivel na API." }
+    }
+
+    // Reuse insertResult which already handles is_finished, updating DB and recalculating points
+    return insertResult(parsed.data, homeScore, awayScore, true)
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : "Erro desconhecido ao buscar API." }
+  }
+}
+

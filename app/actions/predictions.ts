@@ -47,20 +47,25 @@ export async function savePrediction(
 
   const { data: gameData } = await supabase
     .from("games")
-    .select("match_date, is_finished")
+    .select("match_date, is_finished, home_score, away_score")
     .eq("id", parsed.data.gameId)
     .single()
-  const game = gameData as { match_date: string; is_finished: boolean } | null
+  const game = gameData as {
+    match_date: string
+    is_finished: boolean
+    home_score: number | null
+    away_score: number | null
+  } | null
 
   if (!game) {
     return { success: false, error: "Jogo nao encontrado." }
   }
 
-  // Bloqueia palpites em jogos já finalizados
-  if (game.is_finished) {
+  // Bloqueia palpites em jogos já finalizados ou que já tenham placar registrado
+  if (game.is_finished === true || game.home_score !== null || game.away_score !== null) {
     return {
       success: false,
-      error: "Este jogo ja foi finalizado. Nao e possivel palpitar."
+      error: "Este jogo ja foi finalizado ou possui resultado cadastrado. Nao e possivel palpitar."
     }
   }
 
@@ -77,7 +82,8 @@ export async function savePrediction(
 
   // O service role evita bloqueio indevido de RLS em jogos de teste ja marcados
   // como finalizados. A seguranca vem das checagens acima e do user.id da sessao.
-  const { data, error } = await (supabaseAdmin.from("predictions") as any)
+  const { data, error } = await supabaseAdmin
+    .from("predictions")
     .upsert(
       {
         user_id: user.id,

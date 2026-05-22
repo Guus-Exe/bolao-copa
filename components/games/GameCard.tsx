@@ -5,6 +5,7 @@ import { useState, useTransition, type FormEvent } from "react"
 import { savePrediction } from "@/app/actions/predictions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Countdown } from "@/components/games/Countdown"
 import { calculatePoints } from "@/lib/scoring"
 import { cn, formatDate, formatScore } from "@/lib/utils"
 import type { Game, Prediction } from "@/types"
@@ -35,6 +36,7 @@ export function GameCard({
   const isFinished = game.is_finished && hasResult
   const isDeadlineClosed =
     new Date().getTime() >= matchDate.getTime() - 60 * 60 * 1000
+  const deadlineDate = new Date(matchDate.getTime() - 60 * 60 * 1000)
   const earnedPoints = getPoints(game, prediction)
   const status = getPredictionStatus(prediction, isFinished, earnedPoints)
   const submitLabel = prediction ? "Alterar palpite ↗" : "Salvar palpite ↗"
@@ -86,9 +88,12 @@ export function GameCard({
         <TeamBlock flag={game.away_flag} name={game.away_team} align="right" />
       </div>
 
-      <p className="mt-4 text-sm text-[var(--text-secondary)]">
-        {formatDate(game.match_date)} (Brasilia)
-      </p>
+      <div className="mt-4 flex items-center justify-between">
+        <p className="text-sm text-[var(--text-secondary)]">
+          {formatDate(game.match_date)} (Brasília)
+        </p>
+        {!hasResult && <Countdown deadline={deadlineDate} />}
+      </div>
 
       {hasResult ? (
         <div className="mt-5 grid gap-3 rounded-lg bg-[var(--bg-elevated)] p-4 text-sm">
