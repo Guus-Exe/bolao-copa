@@ -79,7 +79,7 @@ export function ProfileAvatarForm({
               Foto de perfil
             </h2>
             <p className="text-sm text-[var(--text-secondary)]">
-              JPG, PNG ou WebP. A imagem e comprimida antes do envio.
+              JPG, PNG ou WebP.
             </p>
           </div>
         </div>

@@ -186,10 +186,8 @@ npx supabase gen types typescript --project-id SEU_PROJECT_ID > types/database.t
 
 | Situação | Pontos |
 |---|---|
-| Placar exato | 10 pts |
-| Vencedor certo + diferença de gols certa | 7 pts |
-| Vencedor certo | 5 pts |
-| Empate certo (placar errado) | 3 pts |
+| Placar exato | 3 pts |
+| Acertou o vencedor | 1 pt |
 | Errou | 0 pts |
 
 > Regras configuráveis em `lib/constants.ts` → `SCORING_RULES`

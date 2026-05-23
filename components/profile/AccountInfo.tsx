@@ -26,9 +26,6 @@ export function AccountInfo({ email }: { email: string }) {
         <h2 className="font-[family-name:var(--font-display)] text-3xl tracking-wide">
           Informações de conta
         </h2>
-        <p className="text-sm text-[var(--text-secondary)]">
-          Email e senha sao gerenciados pelo Supabase Auth.
-        </p>
       </div>
 
       <div className="mt-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
