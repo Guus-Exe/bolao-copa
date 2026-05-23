@@ -1,0 +1,16 @@
+name: Sync World Cup Scores
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # toda hora
+  workflow_dispatch:       # permite rodar manualmente também
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chamar endpoint de sync
+        run: |
+          curl -X GET "${{ secrets.APP_URL }}/api/cron/sync-scores" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            --fail
