@@ -170,6 +170,9 @@ export async function forgotPassword(prevState: AuthState, formData: FormData): 
     origin = `${protocol}://${host}`
   }
   
+  // Remove trailing slash if exists
+  origin = origin.replace(/\/$/, '')
+  
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${origin}/auth/callback?next=/reset-password`
   })
