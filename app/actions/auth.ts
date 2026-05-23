@@ -157,7 +157,18 @@ export async function forgotPassword(prevState: AuthState, formData: FormData): 
   }
 
   const supabase = createServerClient()
-  const origin = (await headers()).get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  const headersList = await headers()
+  const host = headersList.get("host")
+  const protocol = headersList.get("x-forwarded-proto") || (host?.includes("localhost") ? "http" : "https")
+  
+  let origin = "http://localhost:3000"
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    origin = process.env.NEXT_PUBLIC_SITE_URL
+  } else if (process.env.VERCEL_URL) {
+    origin = `https://${process.env.VERCEL_URL}`
+  } else if (host) {
+    origin = `${protocol}://${host}`
+  }
   
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${origin}/auth/callback?next=/reset-password`
