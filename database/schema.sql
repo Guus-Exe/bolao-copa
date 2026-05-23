@@ -62,6 +62,7 @@ create table if not exists public.games (
   home_score int check (home_score is null or home_score >= 0),
   away_score int check (away_score is null or away_score >= 0),
   is_finished boolean not null default false,
+  api_fixture_id int unique,
   created_at timestamptz not null default now()
 );
 

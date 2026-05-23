@@ -12,7 +12,7 @@ type CookieToSet = {
   options: CookieOptions
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request
   })

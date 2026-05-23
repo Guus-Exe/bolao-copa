@@ -1,10 +1,10 @@
 "use client"
 
-import { CalendarPlus, Edit3, ListChecks, Trash2, RefreshCw } from "lucide-react"
+import { CalendarPlus, Download, Edit3, ListChecks, Loader2, Trash2, RefreshCw } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useMemo, useState, type ReactNode } from "react"
 
-import { deleteGame, syncGameScore } from "@/app/actions/admin"
+import { deleteGame, importWorldCupGames, syncGameScore } from "@/app/actions/admin"
 import { GameForm } from "@/components/admin/GameForm"
 import { ResultModal } from "@/components/admin/ResultModal"
 import { Button } from "@/components/ui/button"
@@ -38,6 +38,7 @@ export function GameTable({ games }: GameTableProps) {
   const [resultGame, setResultGame] = useState<Game | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [importing, setImporting] = useState(false)
 
   const orderedGames = useMemo(() => {
     return [...games].sort(
@@ -105,6 +106,37 @@ export function GameTable({ games }: GameTableProps) {
     showToast("Placar sincronizado e pontos calculados!")
   }
 
+  async function handleImport() {
+    setError(null)
+    setImporting(true)
+    setToast("Importando jogos da Copa do Mundo...")
+
+    try {
+      const result = await importWorldCupGames()
+
+      if (!result.success) {
+        setError(result.error)
+        setToast(null)
+        return
+      }
+
+      const { imported, skipped, total } = result.data
+
+      if (imported === 0) {
+        showToast(`Nenhum jogo novo para importar. (${skipped} já cadastrados)`)
+      } else {
+        showToast(
+          `${imported} jogo(s) importado(s) com sucesso! (${skipped} já existiam, ${total} total na API)`
+        )
+      }
+    } catch {
+      setError("Erro inesperado ao importar jogos.")
+      setToast(null)
+    } finally {
+      setImporting(false)
+    }
+  }
+
   return (
     <section className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -114,14 +146,29 @@ export function GameTable({ games }: GameTableProps) {
             Cadastre partidas, edite dados e publique resultados.
           </p>
         </div>
-        <Button
-          type="button"
-          onClick={openCreateForm}
-          className="gap-2 bg-sky-500 text-white hover:bg-sky-600"
-        >
-          <CalendarPlus size={16} />
-          Novo jogo
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            onClick={handleImport}
+            disabled={importing}
+            className="gap-2 border border-emerald-500/30 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25"
+          >
+            {importing ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Download size={16} />
+            )}
+            {importing ? "Importando..." : "Importar da API"}
+          </Button>
+          <Button
+            type="button"
+            onClick={openCreateForm}
+            className="gap-2 bg-sky-500 text-white hover:bg-sky-600"
+          >
+            <CalendarPlus size={16} />
+            Novo jogo
+          </Button>
+        </div>
       </div>
 
       {error ? (
