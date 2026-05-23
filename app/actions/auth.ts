@@ -27,6 +27,7 @@ export type AuthState = {
     email?: string[]
     password?: string[]
     username?: string[]
+    confirmPassword?: string[]
   }
   data?: {
     email?: string
