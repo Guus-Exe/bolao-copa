@@ -1,3 +1,5 @@
+import Link from "next/link"
+import { UsersRound } from "lucide-react"
 import { getUserPredictions } from "@/app/actions/predictions"
 import { GameDashboard } from "@/components/games/GameDashboard"
 import { createServerClient } from "@/lib/supabase/server"
@@ -27,7 +29,7 @@ export default async function DashboardPage() {
           Acesso pendente
         </p>
         <h1 className="mt-2 font-[family-name:var(--font-display)] text-5xl tracking-wide">
-          Aguarde a liberaçãoo do admin
+          Aguarde a liberação do admin
         </h1>
         <p className="mt-3 max-w-2xl text-[var(--text-secondary)]">
           Sua conta já existe, mas ainda não foi marcada como paga. Quando o
@@ -35,6 +37,15 @@ export default async function DashboardPage() {
         </p>
       </section>
     )
+  }
+
+  let pendingUsersCount = 0
+  if (profile?.is_admin) {
+    const { count } = await supabase
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .eq("is_paid", false)
+    pendingUsersCount = count ?? 0
   }
 
   const { data: gamesData } = await supabase
@@ -64,6 +75,23 @@ export default async function DashboardPage() {
           Faça seus palpites até 1 hora antes de cada partida.
         </p>
       </div>
+
+      {profile?.is_admin && pendingUsersCount > 0 && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 text-amber-200">
+          <div className="flex items-center gap-3">
+            <UsersRound className="text-amber-500 shrink-0" size={20} />
+            <p className="text-sm">
+              <strong>Admin:</strong> Há {pendingUsersCount} {pendingUsersCount === 1 ? "usuário aguardando" : "usuários aguardando"} liberação de acesso.
+            </p>
+          </div>
+          <Link
+            href="/admin/usuarios"
+            className="inline-flex shrink-0 items-center justify-center rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-1.5 text-sm font-medium text-amber-200 transition-colors hover:bg-amber-500/20 hover:text-amber-100"
+          >
+            Ver Usuários
+          </Link>
+        </div>
+      )}
 
       <GameDashboard games={games} predictions={predictions} />
     </section>
