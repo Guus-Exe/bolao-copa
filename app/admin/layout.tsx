@@ -63,7 +63,7 @@ export default async function AdminLayout({
             </form>
           </div>
 
-          <nav className="mt-5 flex gap-2 overflow-x-auto md:flex-col md:overflow-visible">
+          <nav className="mt-5 flex flex-wrap gap-2 md:flex-col">
             <AdminLink href="/admin" icon={<LayoutDashboard size={17} />}>
               Resumo
             </AdminLink>

@@ -70,7 +70,7 @@ export function GameForm({ open, game, onClose, onSaved }: GameFormProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="w-full max-w-2xl rounded-lg border border-sky-500/20 bg-slate-950 p-5 text-white shadow-2xl">
+      <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-lg border border-sky-500/20 bg-slate-950 p-5 text-white shadow-2xl">
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-sky-300">

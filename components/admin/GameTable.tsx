@@ -177,7 +177,7 @@ export function GameTable({ games }: GameTableProps) {
         </div>
       ) : null}
 
-      <div className="overflow-hidden rounded-lg border border-sky-500/20 bg-slate-950/55">
+      <div className="hidden md:block overflow-hidden rounded-lg border border-sky-500/20 bg-slate-950/55">
         <Table className="min-w-[900px]">
           <TableHeader>
             <TableRow>
@@ -248,6 +248,77 @@ export function GameTable({ games }: GameTableProps) {
             ))}
           </TableBody>
         </Table>
+        {orderedGames.length === 0 ? (
+          <p className="p-6 text-center text-sm text-sky-200">
+            Nenhum jogo cadastrado ainda.
+          </p>
+        ) : null}
+      </div>
+
+      <div className="md:hidden space-y-4">
+        {orderedGames.map((game) => (
+          <div
+            key={game.id}
+            className="flex flex-col gap-4 rounded-lg border border-sky-500/20 bg-slate-950/55 p-4"
+          >
+            <div className="flex items-center justify-between">
+              <span
+                className={
+                  game.is_finished
+                    ? "rounded-full border border-green-500/20 bg-green-500/10 px-2.5 py-1 text-xs font-semibold text-green-300"
+                    : "rounded-full border border-sky-500/20 bg-sky-500/10 px-2.5 py-1 text-xs font-semibold text-sky-300"
+                }
+              >
+                {game.is_finished ? "Encerrado" : "Futuro"}
+              </span>
+              <div className="flex gap-1">
+                <IconButton label="Editar" onClick={() => openEditForm(game)} className="bg-sky-500/10 text-sky-300">
+                  <Edit3 size={16} />
+                </IconButton>
+                {game.api_fixture_id && !game.is_finished ? (
+                  <IconButton label="Sincronizar da API" onClick={() => handleSync(game)} className="bg-emerald-500/10 text-emerald-400 hover:text-emerald-300">
+                    <RefreshCw size={16} />
+                  </IconButton>
+                ) : null}
+                <IconButton label="Resultado" onClick={() => setResultGame(game)} className="bg-sky-500/10 text-sky-300">
+                  <ListChecks size={16} />
+                </IconButton>
+                <IconButton
+                  label="Excluir"
+                  className="bg-red-500/10 text-red-400 hover:text-red-300"
+                  onClick={() => handleDelete(game)}
+                >
+                  <Trash2 size={16} />
+                </IconButton>
+              </div>
+            </div>
+
+            <div className="flex flex-col items-center justify-center gap-2 border-y border-sky-500/20 py-4">
+              <div className="text-xs font-semibold text-sky-200">
+                {STAGE_LABELS[game.stage] ?? game.stage}
+                {game.group_name ? ` - ${game.group_name}` : ""}
+              </div>
+              <div className="flex w-full items-center justify-between px-2">
+                <div className="flex w-1/3 flex-col items-center gap-1 text-center font-semibold text-white">
+                  <span className="text-xl">{game.home_flag}</span>
+                  <span className="truncate w-full">{game.home_team}</span>
+                </div>
+                <div className="flex w-1/3 flex-col items-center justify-center font-bold text-sky-100">
+                  <span className="text-xl">{formatScore(game.home_score, game.away_score)}</span>
+                  <span className="text-xs text-sky-500">X</span>
+                </div>
+                <div className="flex w-1/3 flex-col items-center gap-1 text-center font-semibold text-white">
+                  <span className="text-xl">{game.away_flag}</span>
+                  <span className="truncate w-full">{game.away_team}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-center text-sm text-sky-100">
+              {formatDate(game.match_date)}
+            </div>
+          </div>
+        ))}
         {orderedGames.length === 0 ? (
           <p className="p-6 text-center text-sm text-sky-200">
             Nenhum jogo cadastrado ainda.

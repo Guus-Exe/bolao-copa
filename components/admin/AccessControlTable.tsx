@@ -61,7 +61,7 @@ export function AccessControlTable({ users }: AccessControlTableProps) {
   const filteredUsers = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase()
 
-    return rows.filter((user) => {
+    const filtered = rows.filter((user) => {
       const matchesFilter =
         filter === "todos" ||
         (filter === "liberados" && user.is_paid) ||
@@ -72,6 +72,14 @@ export function AccessControlTable({ users }: AccessControlTableProps) {
         user.email.toLowerCase().includes(normalizedQuery)
 
       return matchesFilter && matchesQuery
+    })
+
+    return filtered.sort((a, b) => {
+      if (a.is_paid === b.is_paid) {
+        // If status is the same, sort by date descending (newest first)
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      }
+      return a.is_paid ? 1 : -1
     })
   }, [filter, query, rows])
 
@@ -210,7 +218,7 @@ export function AccessControlTable({ users }: AccessControlTableProps) {
         ) : null}
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-sky-500/20 bg-slate-950/55">
+      <div className="hidden md:block overflow-hidden rounded-lg border border-sky-500/20 bg-slate-950/55">
         <Table className="min-w-[860px]">
           <TableHeader>
             <TableRow>
@@ -276,6 +284,65 @@ export function AccessControlTable({ users }: AccessControlTableProps) {
             })}
           </TableBody>
         </Table>
+        {filteredUsers.length === 0 ? (
+          <p className="p-6 text-center text-sm text-sky-200">
+            Nenhum participante encontrado.
+          </p>
+        ) : null}
+      </div>
+
+      <div className="md:hidden space-y-4">
+        {filteredUsers.map((user) => {
+          const isPending = pendingIds.includes(user.id)
+
+          return (
+            <div
+              key={user.id}
+              className="rounded-lg border border-sky-500/20 bg-slate-950/55 p-4 flex flex-col gap-4"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Avatar user={user} />
+                  <div>
+                    <p className="font-semibold text-white">
+                      {getMention(user.username)}
+                    </p>
+                    {user.is_admin ? (
+                      <p className="text-xs font-semibold text-sky-300">Admin</p>
+                    ) : null}
+                  </div>
+                </div>
+                <AccessBadge isPaid={user.is_paid} />
+              </div>
+
+              <div className="text-sm text-sky-100 flex flex-col gap-1">
+                <p className="truncate">{user.email}</p>
+                <p className="text-xs text-sky-200/70">
+                  Cadastrado em {formatDate(user.created_at)}
+                </p>
+              </div>
+
+              <Button
+                type="button"
+                variant={user.is_paid ? "outline" : "default"}
+                size="sm"
+                disabled={isPending}
+                onClick={() => openAccessDialog(user)}
+                className={`w-full ${
+                  user.is_paid
+                    ? "border-red-500/30 text-red-300 hover:bg-red-500/10 hover:text-red-200"
+                    : "bg-green-500 text-slate-950 hover:bg-green-600"
+                }`}
+              >
+                {isPending
+                  ? "Atualizando..."
+                  : user.is_paid
+                    ? "Revogar acesso"
+                    : "Liberar acesso"}
+              </Button>
+            </div>
+          )
+        })}
         {filteredUsers.length === 0 ? (
           <p className="p-6 text-center text-sm text-sky-200">
             Nenhum participante encontrado.

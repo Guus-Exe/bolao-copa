@@ -43,11 +43,18 @@ export function UserTable({ users }: UserTableProps) {
   const [error, setError] = useState<string | null>(null)
 
   const filteredUsers = useMemo(() => {
-    return users.filter((user) => {
+    const filtered = users.filter((user) => {
       if (filter === "pagos") return user.is_paid
       if (filter === "pendentes") return !user.is_paid
       if (filter === "admins") return user.is_admin
       return true
+    })
+
+    return filtered.sort((a, b) => {
+      if (a.is_paid === b.is_paid) {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      }
+      return a.is_paid ? 1 : -1
     })
   }, [filter, users])
 
@@ -152,7 +159,7 @@ export function UserTable({ users }: UserTableProps) {
         </div>
       ) : null}
 
-      <div className="overflow-hidden rounded-lg border border-sky-500/20 bg-slate-950/55">
+      <div className="hidden md:block overflow-hidden rounded-lg border border-sky-500/20 bg-slate-950/55">
         <Table className="min-w-[980px]">
           <TableHeader>
             <TableRow>
@@ -215,6 +222,69 @@ export function UserTable({ users }: UserTableProps) {
             ))}
           </TableBody>
         </Table>
+        {filteredUsers.length === 0 ? (
+          <p className="p-6 text-center text-sm text-sky-200">
+            Nenhum usuário encontrado para este filtro.
+          </p>
+        ) : null}
+      </div>
+
+      <div className="md:hidden space-y-4">
+        {filteredUsers.map((user) => (
+          <div
+            key={user.id}
+            className="rounded-lg border border-sky-500/20 bg-slate-950/55 p-4 flex flex-col gap-4"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Avatar user={user} />
+                <p className="font-semibold text-white">{user.username}</p>
+              </div>
+              <div className="flex gap-2">
+                <IconButton
+                  label="Ver palpites"
+                  onClick={() => setSelectedUser(user)}
+                  className="bg-sky-500/10 text-sky-300"
+                >
+                  <ListChecks size={16} />
+                </IconButton>
+                <IconButton
+                  label="Excluir usuário"
+                  className="bg-red-500/10 text-red-400 hover:text-red-300"
+                  onClick={() => handleDelete(user)}
+                >
+                  <Trash2 size={16} />
+                </IconButton>
+              </div>
+            </div>
+
+            <div className="text-sm text-sky-100 flex flex-col gap-1">
+              <p className="truncate">{user.email}</p>
+              <p className="text-xs text-sky-200/70">
+                Cadastrado em {formatDate(user.created_at)}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 pt-4 border-t border-sky-500/20">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-sky-200">Acesso:</span>
+                <Toggle
+                  checked={user.is_paid}
+                  onClick={() => handleAccessToggle(user)}
+                  label={user.is_paid ? "Pago" : "Pendente"}
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-semibold text-sky-200">Admin:</span>
+                <Toggle
+                  checked={user.is_admin}
+                  onClick={() => handleAdminToggle(user)}
+                  label={user.is_admin ? "Admin" : "Não admin"}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
         {filteredUsers.length === 0 ? (
           <p className="p-6 text-center text-sm text-sky-200">
             Nenhum usuário encontrado para este filtro.

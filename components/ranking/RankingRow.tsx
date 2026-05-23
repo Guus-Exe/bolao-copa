@@ -7,7 +7,7 @@ type RankingRowProps = {
   isCurrentUser: boolean
 }
 
-const topPositionClasses: Record<number, string> = {
+export const topPositionClasses: Record<number, string> = {
   1: "bg-yellow-400/15 text-yellow-100 ring-yellow-400/30",
   2: "bg-slate-400/15 text-slate-100 ring-slate-400/30",
   3: "bg-orange-400/15 text-orange-100 ring-orange-400/30"

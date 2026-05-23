@@ -11,10 +11,6 @@ export function UserHighlight({ entry }: UserHighlightProps) {
     return null
   }
 
-  const accuracy = entry.total_predictions
-    ? Math.round((entry.exact_scores / entry.total_predictions) * 100)
-    : 0
-
   return (
     <aside className="sticky bottom-4 z-20 rounded-lg border border-green-500/30 bg-green-500/10 p-4 shadow-xl shadow-black/20 backdrop-blur">
       {/* Resumo sempre visivel para o usuario se localizar na classificacao. */}
@@ -33,7 +29,7 @@ export function UserHighlight({ entry }: UserHighlightProps) {
         <dl className="grid grid-cols-3 gap-3 text-center">
           <Stat label="Pontos" value={entry.total_points} />
           <Stat label="Palpites" value={entry.total_predictions} />
-          <Stat label="Exatos" value={`${accuracy}%`} />
+          <Stat label="Exatos" value={entry.exact_scores} />
         </dl>
       </div>
     </aside>
