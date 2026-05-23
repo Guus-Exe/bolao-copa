@@ -14,6 +14,7 @@ import {
   adminUserToggleSchema
 } from "@/lib/validations"
 import { fetchFixtures, fetchAllWorldCupFixtures } from "@/lib/api-football"
+import { extractGamesFromText, extractTextFromPDF } from "@/lib/pdf-game-extractor"
 import type { Game, Prediction, Profile } from "@/types"
 
 type ActionResult<T = void> =
@@ -871,6 +872,130 @@ export async function importWorldCupGames(): Promise<ActionResult<ImportResult>>
       error: err instanceof Error
         ? err.message
         : "Erro desconhecido ao importar jogos."
+    }
+  }
+}
+
+export async function deleteAllGames(): Promise<ActionResult> {
+  const admin = await requireAdmin()
+
+  if (!admin.success) {
+    return admin
+  }
+
+  // Delete all predictions first to avoid foreign key constraints
+  const { error: deletePredictionsError } = await supabaseAdmin
+    .from("predictions")
+    .delete()
+    .neq("id", "00000000-0000-0000-0000-000000000000") // A dummy condition to delete all rows
+
+  if (deletePredictionsError) {
+    return { success: false, error: "Não foi possível excluir os palpites vinculados aos jogos." }
+  }
+
+  const { error } = await supabaseAdmin
+    .from("games")
+    .delete()
+    .neq("id", "00000000-0000-0000-0000-000000000000")
+
+  if (error) {
+    return { success: false, error: "Não foi possível excluir os jogos." }
+  }
+
+  revalidatePath("/dashboard")
+  revalidatePath("/ranking")
+  revalidateAdminViews()
+
+  return { success: true, data: undefined }
+}
+
+
+
+// =============================================================
+// Importação de jogos via upload de PDF pelo painel admin
+// =============================================================
+
+export type PDFImportResult = ImportResult & { warnings: string[] }
+
+export async function importGamesFromUploadedPDF(
+  formData: FormData
+): Promise<ActionResult<PDFImportResult>> {
+  const admin = await requireAdmin()
+  if (!admin.success) return admin
+
+  const file = formData.get("pdf") as File | null
+
+  if (!file || file.size === 0) {
+    return { success: false, error: "Nenhum arquivo PDF enviado." }
+  }
+
+  if (!file.name.toLowerCase().endsWith(".pdf")) {
+    return { success: false, error: "O arquivo precisa ser um PDF." }
+  }
+
+  // Limite de 10 MB
+  if (file.size > 10 * 1024 * 1024) {
+    return { success: false, error: "O PDF não pode ultrapassar 10 MB." }
+  }
+
+  try {
+    const buffer = await file.arrayBuffer()
+    const text   = await extractTextFromPDF(buffer)
+
+    if (!text.trim()) {
+      return { success: false, error: "Não foi possível extrair texto do PDF. Verifique se o arquivo é válido." }
+    }
+
+    const { games, warnings } = extractGamesFromText(text)
+
+    if (games.length === 0) {
+      return {
+        success: false,
+        error: "Nenhum jogo encontrado no PDF. Certifique-se de exportar o PDF do FBref em inglês."
+      }
+    }
+
+    // Deduplicação: busca jogos existentes pelo mesmo home+away+data
+    const { data: existingGames, error: fetchError } = await supabaseAdmin
+      .from("games")
+      .select("home_team, away_team, match_date")
+
+    if (fetchError) {
+      return { success: false, error: "Erro ao verificar jogos existentes: " + fetchError.message }
+    }
+
+    const existingKeys = new Set(
+      (existingGames ?? []).map((g) => `${g.home_team}|${g.away_team}|${g.match_date}`)
+    )
+
+    const newGames = games.filter(
+      (g) => !existingKeys.has(`${g.home_team}|${g.away_team}|${g.match_date}`)
+    )
+
+    const total   = games.length
+    const skipped = total - newGames.length
+
+    if (newGames.length === 0) {
+      return { success: true, data: { imported: 0, skipped, total, warnings } }
+    }
+
+    const { error: insertError } = await supabaseAdmin.from("games").insert(newGames)
+
+    if (insertError) {
+      return {
+        success: false,
+        error: "Erro ao inserir jogos no banco: " + insertError.message
+      }
+    }
+
+    revalidatePath("/dashboard")
+    revalidateAdminViews()
+
+    return { success: true, data: { imported: newGames.length, skipped, total, warnings } }
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Erro inesperado ao processar o PDF."
     }
   }
 }

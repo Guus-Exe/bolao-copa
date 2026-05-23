@@ -1,10 +1,10 @@
 "use client"
 
-import { CalendarPlus, Download, Edit3, ListChecks, Loader2, Trash2, RefreshCw } from "lucide-react"
+import { CalendarPlus, Download, Edit3, FileText, ListChecks, Loader2, Trash2, RefreshCw, Upload } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useMemo, useState, type ReactNode } from "react"
+import { useMemo, useRef, useState, type ReactNode } from "react"
 
-import { deleteGame, importWorldCupGames, syncGameScore } from "@/app/actions/admin"
+import { deleteAllGames, deleteGame, importWorldCupGames, importGamesFromUploadedPDF, syncGameScore } from "@/app/actions/admin"
 import { GameForm } from "@/components/admin/GameForm"
 import { ResultModal } from "@/components/admin/ResultModal"
 import { Button } from "@/components/ui/button"
@@ -16,6 +16,15 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import { formatDate, formatScore } from "@/lib/utils"
 import type { Game } from "@/types"
 
@@ -39,6 +48,12 @@ export function GameTable({ games }: GameTableProps) {
   const [toast, setToast] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [importing, setImporting] = useState(false)
+  const [uploadingPDF, setUploadingPDF] = useState(false)
+  const [isDeleteAllOpen, setIsDeleteAllOpen] = useState(false)
+  const [confirmText, setConfirmText] = useState("")
+  const [deletingAll, setDeletingAll] = useState(false)
+
+  const pdfInputRef = useRef<HTMLInputElement>(null)
 
   const orderedGames = useMemo(() => {
     return [...games].sort(
@@ -137,6 +152,73 @@ export function GameTable({ games }: GameTableProps) {
     }
   }
 
+
+
+  async function handleDeleteAll() {
+    if (confirmText !== "Confirmar") return
+
+    setError(null)
+    setDeletingAll(true)
+    setToast("Excluindo todos os jogos...")
+    
+    const result = await deleteAllGames()
+
+    if (!result.success) {
+      setError(result.error)
+      setToast(null)
+    } else {
+      showToast("Todos os jogos foram excluídos.")
+      setIsDeleteAllOpen(false)
+      setConfirmText("")
+    }
+    
+    setDeletingAll(false)
+  }
+
+  async function handleUploadPDF(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Reseta o input para permitir selecionar o mesmo arquivo de novo
+    e.target.value = ""
+
+    setError(null)
+    setUploadingPDF(true)
+    setToast(`Processando "${file.name}"...`)
+
+    try {
+      const formData = new FormData()
+      formData.append("pdf", file)
+
+      const result = await importGamesFromUploadedPDF(formData)
+
+      if (!result.success) {
+        setError(result.error)
+        setToast(null)
+        return
+      }
+
+      const { imported, skipped, total, warnings } = result.data
+
+      if (warnings.length > 0) {
+        console.warn("[PDF Import] Avisos:", warnings)
+      }
+
+      if (imported === 0) {
+        showToast(`Nenhum jogo novo encontrado no PDF. (${skipped} já existiam)`)
+      } else {
+        showToast(
+          `✅ ${imported} jogo(s) importado(s) do PDF! (${skipped} já existiam, ${total} total)`
+        )
+      }
+    } catch {
+      setError("Erro inesperado ao processar o PDF.")
+      setToast(null)
+    } finally {
+      setUploadingPDF(false)
+    }
+  }
+
   return (
     <section className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -146,7 +228,32 @@ export function GameTable({ games }: GameTableProps) {
             Cadastre partidas, edite dados e publique resultados.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          {/* Input oculto para seleção de PDF */}
+          <input
+            ref={pdfInputRef}
+            type="file"
+            accept=".pdf"
+            className="hidden"
+            onChange={handleUploadPDF}
+          />
+
+          {/* Botão de upload de PDF (FBref inglês) */}
+          <Button
+            type="button"
+            onClick={() => pdfInputRef.current?.click()}
+            disabled={uploadingPDF || importing}
+            className="gap-2 border border-violet-500/30 bg-violet-500/15 text-violet-200 hover:bg-violet-500/25"
+          >
+            {uploadingPDF ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Upload size={16} />
+            )}
+            {uploadingPDF ? "Processando..." : "Enviar PDF"}
+          </Button>
+
+
           <Button
             type="button"
             onClick={handleImport}
@@ -167,6 +274,14 @@ export function GameTable({ games }: GameTableProps) {
           >
             <CalendarPlus size={16} />
             Novo jogo
+          </Button>
+          <Button
+            type="button"
+            onClick={() => setIsDeleteAllOpen(true)}
+            className="gap-2 border border-red-500/30 bg-red-500/15 text-red-200 hover:bg-red-500/25"
+          >
+            <Trash2 size={16} />
+            Remover todos
           </Button>
         </div>
       </div>
@@ -343,6 +458,47 @@ export function GameTable({ games }: GameTableProps) {
           {toast}
         </div>
       ) : null}
+
+      <Dialog open={isDeleteAllOpen} onOpenChange={setIsDeleteAllOpen}>
+        <DialogContent className="border-sky-500/20 bg-slate-950 sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-white">Remover todos os jogos</DialogTitle>
+            <DialogDescription className="text-sky-200">
+              Esta ação excluirá todos os jogos e palpites vinculados. Para continuar, digite <strong className="text-red-400">Confirmar</strong> abaixo.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Input
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="Digite Confirmar"
+              className="border-sky-500/30 bg-slate-900 text-white"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setIsDeleteAllOpen(false)
+                setConfirmText("")
+              }}
+              className="border-sky-500/30 text-sky-200 hover:bg-sky-500/10 hover:text-white"
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              onClick={handleDeleteAll}
+              disabled={confirmText !== "Confirmar" || deletingAll}
+              className="bg-red-500 text-white hover:bg-red-600 gap-2"
+            >
+              {deletingAll ? <Loader2 size={16} className="animate-spin" /> : null}
+              Excluir Tudo
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }
