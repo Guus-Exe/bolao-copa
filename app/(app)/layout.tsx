@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button"
 import { createServerClient } from "@/lib/supabase/server"
 import { cn } from "@/lib/utils"
 
+import { OnboardingModal } from "@/components/onboarding/OnboardingModal"
+
 export default async function AppLayout({
   children
 }: Readonly<{
@@ -80,6 +82,7 @@ export default async function AppLayout({
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl px-4 py-8">{children}</main>
+      <OnboardingModal />
     </div>
   )
 }
