@@ -4,7 +4,7 @@ import { GAME_STAGES } from "@/lib/constants"
 
 export const authSchema = z.object({
   email: z.string().email("Informe um email valido."),
-  password: z.string().min(8, "A senha precisa ter no minimo 8 caracteres.")
+  password: z.string().min(6, "A senha precisa ter no minimo 6 caracteres.")
 })
 
 
@@ -31,7 +31,7 @@ export const accountEmailSchema = z.object({
 
 export const passwordUpdateSchema = z
   .object({
-    password: z.string().min(8, "A senha precisa ter no minimo 8 caracteres."),
+    password: z.string().min(6, "A senha precisa ter no minimo 6 caracteres."),
     confirmPassword: z.string()
   })
   .refine((data) => data.password === data.confirmPassword, {

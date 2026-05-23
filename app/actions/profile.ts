@@ -46,7 +46,7 @@ export async function updateUsername(
   }
 
   if (existingProfile && existingProfile.id !== user.id) {
-    return { success: false, error: "Este apelido já está em uso." }
+    return { success: false, error: "Este apelido já está em uso, por favor escolha outro." }
   }
 
   const { error } = await supabaseAdmin
