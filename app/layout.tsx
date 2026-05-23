@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Bebas_Neue, Inter } from "next/font/google"
 
 import "./globals.css"
@@ -17,6 +17,13 @@ const body = Inter({
 export const metadata: Metadata = {
   title: "Bolão da Copa 2026",
   description: "Palpites, ranking e chat em tempo real para a Copa do Mundo."
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 }
 
 export default function RootLayout({
