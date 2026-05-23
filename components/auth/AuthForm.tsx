@@ -1,10 +1,12 @@
 "use client"
 
 import { Trophy, Loader2 } from "lucide-react"
-import { useActionState } from "react"
+import { useActionState, useEffect, useState } from "react"
 import type { ReactNode } from "react"
+import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Card,
   CardContent,
@@ -25,6 +27,11 @@ type AuthFormProps = {
   message?: string // Initial message
   footer: ReactNode
   showUsername?: boolean
+  showRememberMe?: boolean
+  forgotPasswordLink?: string
+  showPassword?: boolean
+  showConfirmPassword?: boolean
+  showEmail?: boolean
 }
 
 export function AuthForm({
@@ -34,9 +41,28 @@ export function AuthForm({
   buttonLabel,
   message,
   footer,
-  showUsername
+  showUsername,
+  showRememberMe,
+  forgotPasswordLink,
+  showPassword = true,
+  showConfirmPassword,
+  showEmail = true
 }: AuthFormProps) {
   const [state, formAction, isPending] = useActionState(action, { message })
+  const [email, setEmail] = useState(state?.data?.email || "")
+
+  useEffect(() => {
+    if (showRememberMe && !state?.data?.email) {
+      const stored = localStorage.getItem("bolao_user_email")
+      if (stored) setEmail(stored)
+    }
+  }, [state?.data?.email, showRememberMe])
+
+  const handleSubmit = () => {
+    if (showRememberMe) {
+      localStorage.setItem("bolao_user_email", email)
+    }
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[var(--bg-base)] px-4 py-12">
@@ -60,7 +86,7 @@ export function AuthForm({
               {state.message}
             </p>
           ) : null}
-          <form action={formAction} className="space-y-4" noValidate>
+          <form action={formAction} onSubmit={handleSubmit} className="space-y-4" noValidate>
             {showUsername && (
               <div className="space-y-2">
                 <Label htmlFor="username">Apelido</Label>
@@ -81,38 +107,82 @@ export function AuthForm({
                 )}
               </div>
             )}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                placeholder="voce@email.com"
-                className={state?.errors?.email ? "border-red-500 focus-visible:ring-red-500" : ""}
-                defaultValue={state?.data?.email || ""}
-              />
-              {state?.errors?.email && (
-                <p className="text-sm text-red-500">{state.errors.email[0]}</p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                minLength={6}
-                placeholder="Minimo 6 caracteres"
-                className={state?.errors?.password ? "border-red-500 focus-visible:ring-red-500" : ""}
-              />
-              {state?.errors?.password && (
-                <p className="text-sm text-red-500">{state.errors.password[0]}</p>
-              )}
-            </div>
+            {showEmail && (
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  placeholder="voce@email.com"
+                  className={state?.errors?.email ? "border-red-500 focus-visible:ring-red-500" : ""}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                {state?.errors?.email && (
+                  <p className="text-sm text-red-500">{state.errors.email[0]}</p>
+                )}
+              </div>
+            )}
+            {showPassword && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Senha</Label>
+                  {forgotPasswordLink && (
+                    <Link
+                      href={forgotPasswordLink}
+                      className="text-sm font-medium text-primary hover:underline"
+                    >
+                      Esqueceu a senha?
+                    </Link>
+                  )}
+                </div>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  minLength={6}
+                  placeholder="Minimo 6 caracteres"
+                  className={state?.errors?.password ? "border-red-500 focus-visible:ring-red-500" : ""}
+                />
+                {state?.errors?.password && (
+                  <p className="text-sm text-red-500">{state.errors.password[0]}</p>
+                )}
+              </div>
+            )}
+            {showConfirmPassword && (
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  minLength={6}
+                  placeholder="Repita a nova senha"
+                  className={state?.errors?.confirmPassword ? "border-red-500 focus-visible:ring-red-500" : ""}
+                />
+                {state?.errors?.confirmPassword && (
+                  <p className="text-sm text-red-500">{state.errors.confirmPassword[0]}</p>
+                )}
+              </div>
+            )}
+            {showRememberMe && (
+              <div className="flex items-center space-x-2">
+                <Checkbox id="remember" name="remember" defaultChecked={true} />
+                <Label
+                  htmlFor="remember"
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  Lembrar de mim
+                </Label>
+              </div>
+            )}
             <Button type="submit" className="w-full" disabled={isPending}>
               {isPending ? (
                 <>

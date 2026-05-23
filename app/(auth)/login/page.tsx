@@ -26,6 +26,8 @@ export default async function LoginPage(props: Props) {
           </Link>
         </>
       }
+      showRememberMe={true}
+      forgotPasswordLink="/forgot-password"
     />
   )
 }

@@ -4,7 +4,8 @@ import { redirect } from "next/navigation"
 
 import { supabaseAdmin } from "@/lib/supabase/admin"
 import { createServerClient } from "@/lib/supabase/server"
-import { authSchema, signUpSchema } from "@/lib/validations"
+import { authSchema, signUpSchema, accountEmailSchema, passwordUpdateSchema } from "@/lib/validations"
+import { headers } from "next/headers"
 
 function encodedMessage(path: string, message: string) {
   return `${path}?message=${encodeURIComponent(message)}`
@@ -49,7 +50,8 @@ export async function signIn(prevState: AuthState, formData: FormData): Promise<
     }
   }
 
-  const supabase = createServerClient()
+  const rememberMe = formData.get("remember") === "on"
+  const supabase = createServerClient(rememberMe)
   const { error } = await supabase.auth.signInWithPassword(parsed.data)
 
   if (error) {
@@ -136,4 +138,69 @@ export async function signOut() {
   const supabase = createServerClient()
   await supabase.auth.signOut()
   redirect("/login")
+}
+
+export async function forgotPassword(prevState: AuthState, formData: FormData): Promise<AuthState> {
+  const data = {
+    email: formData.get("email") as string
+  }
+
+  const parsed = accountEmailSchema.safeParse(data)
+
+  if (!parsed.success) {
+    return {
+      message: "Verifique o email informado.",
+      errors: parsed.error.flatten().fieldErrors,
+      data: { email: data.email }
+    }
+  }
+
+  const supabase = createServerClient()
+  const origin = (await headers()).get("origin") || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: `${origin}/auth/callback?next=/reset-password`
+  })
+
+  if (error) {
+    return {
+      message: "Ocorreu um erro ao enviar o email. Tente novamente.",
+      data: { email: data.email }
+    }
+  }
+
+  return {
+    message: "Verifique sua caixa de entrada! Um link de redefinição foi enviado para o seu email.",
+    data: { email: "" } // limpar form
+  }
+}
+
+export async function updatePassword(prevState: AuthState, formData: FormData): Promise<AuthState> {
+  const data = {
+    password: formData.get("password") as string,
+    confirmPassword: formData.get("confirmPassword") as string
+  }
+
+  const parsed = passwordUpdateSchema.safeParse(data)
+
+  if (!parsed.success) {
+    return {
+      message: "Verifique os campos abaixo e tente novamente.",
+      errors: parsed.error.flatten().fieldErrors
+    }
+  }
+
+  const supabase = createServerClient()
+  
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.password
+  })
+
+  if (error) {
+    return {
+      message: "Não foi possível atualizar sua senha. O link pode ter expirado."
+    }
+  }
+
+  redirect(encodedMessage("/login", "Senha alterada com sucesso! Faça login com a nova senha."))
 }

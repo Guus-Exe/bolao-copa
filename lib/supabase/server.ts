@@ -12,7 +12,7 @@ type CookieToSet = {
   options: CookieOptions
 }
 
-export function createServerClient() {
+export function createServerClient(rememberMe: boolean = true) {
   return createSupabaseServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -26,6 +26,10 @@ export function createServerClient() {
           try {
             const cookieStore = await cookies()
             cookiesToSet.forEach(({ name, value, options }) => {
+              if (!rememberMe) {
+                delete options.maxAge
+                delete options.expires
+              }
               cookieStore.set(name, value, options)
             })
           } catch {
