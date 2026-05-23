@@ -39,6 +39,11 @@ export default async function AdminLayout({
     redirect("/dashboard")
   }
 
+  const { count: pendingUsersCount } = await supabase
+    .from("profiles")
+    .select("id", { count: "exact", head: true })
+    .eq("is_paid", false)
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       <div className="flex min-h-screen flex-col md:flex-row">
@@ -68,7 +73,7 @@ export default async function AdminLayout({
             <AdminLink href="/admin/controle" icon={<LockKeyhole size={17} />}>
               Controle
             </AdminLink>
-            <AdminLink href="/admin/usuarios" icon={<UsersRound size={17} />}>
+            <AdminLink href="/admin/usuarios" icon={<UsersRound size={17} />} badge={pendingUsersCount ?? 0}>
               Usuários
             </AdminLink>
             <AdminLink href="/dashboard" icon={<PanelLeftClose size={17} />}>
@@ -89,7 +94,22 @@ export default async function AdminLayout({
         </aside>
 
         <main className="w-full flex-1 px-4 py-6 md:px-8 lg:px-10">
-          <div className="mx-auto w-full max-w-7xl">{children}</div>
+          <div className="mx-auto w-full max-w-7xl">
+            {pendingUsersCount !== null && pendingUsersCount > 0 && (
+              <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 text-amber-100">
+                <div className="flex items-center gap-3">
+                  <UsersRound className="text-amber-500 shrink-0" size={20} />
+                  <p className="text-sm">
+                    <strong>Atenção:</strong> Há {pendingUsersCount} {pendingUsersCount === 1 ? "usuário aguardando" : "usuários aguardando"} liberação de acesso.
+                  </p>
+                </div>
+                <Button asChild size="sm" variant="outline" className="shrink-0 border-amber-500/20 bg-amber-500/10 hover:bg-amber-500/20 text-amber-100 hover:text-amber-50">
+                  <Link href="/admin/usuarios">Ver Usuários</Link>
+                </Button>
+              </div>
+            )}
+            {children}
+          </div>
         </main>
       </div>
     </div>
@@ -99,19 +119,28 @@ export default async function AdminLayout({
 function AdminLink({
   href,
   icon,
+  badge,
   children
 }: {
   href: string
   icon: ReactNode
+  badge?: number
   children: ReactNode
 }) {
   return (
     <Link
       href={href}
-      className="inline-flex h-10 shrink-0 items-center gap-2 rounded-md border border-sky-500/20 px-3 text-sm font-semibold text-sky-100 transition-colors hover:bg-sky-500/10 hover:text-white md:w-full"
+      className="inline-flex h-10 shrink-0 items-center justify-between rounded-md border border-sky-500/20 px-3 text-sm font-semibold text-sky-100 transition-colors hover:bg-sky-500/10 hover:text-white md:w-full"
     >
-      {icon}
-      {children}
+      <div className="flex items-center gap-2">
+        {icon}
+        {children}
+      </div>
+      {badge !== undefined && badge > 0 && (
+        <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-amber-500 px-1 text-xs font-bold text-slate-950">
+          {badge}
+        </span>
+      )}
     </Link>
   )
 }

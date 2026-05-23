@@ -251,11 +251,19 @@ language plpgsql
 security definer
 set search_path = public
 as $$
+declare
+  v_username text;
 begin
+  v_username := new.raw_user_meta_data ->> 'username';
+  
+  if v_username is null or v_username = '' then
+    v_username := new.email;
+  end if;
+
   insert into public.profiles (id, username, full_name)
   values (
     new.id,
-    public.slugify_username(new.email),
+    public.slugify_username(v_username),
     nullif(new.raw_user_meta_data ->> 'full_name', '')
   );
 
