@@ -61,7 +61,7 @@ export function ProfileAvatarForm({
         setMessage("Foto atualizada com sucesso.")
       })
     } catch {
-      setError("Nao foi possivel comprimir a imagem.")
+      setError("Não foi possível comprimir a imagem.")
     } finally {
       if (inputRef.current) {
         inputRef.current.value = ""

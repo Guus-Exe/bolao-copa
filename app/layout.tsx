@@ -15,7 +15,7 @@ const body = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Bolao da Copa 2026",
+  title: "Bolão da Copa 2026",
   description: "Palpites, ranking e chat em tempo real para a Copa do Mundo."
 }
 

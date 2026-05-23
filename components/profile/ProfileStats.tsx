@@ -35,10 +35,10 @@ export function ProfileStats({ entry }: ProfileStatsProps) {
     <section className="rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface)] p-5">
       <div>
         <h2 className="font-[family-name:var(--font-display)] text-3xl tracking-wide">
-          Estatisticas pessoais
+          Estatísticas pessoais
         </h2>
         <p className="text-sm text-[var(--text-secondary)]">
-          Resumo somente leitura da sua campanha no bolao.
+          Resumo somente leitura da sua campanha no bolão.
         </p>
       </div>
 

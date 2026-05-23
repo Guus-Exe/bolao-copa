@@ -22,7 +22,7 @@ export async function savePrediction(
   const parsed = predictionSchema.safeParse({ gameId, homeScore, awayScore })
 
   if (!parsed.success) {
-    return { success: false, error: "Informe um placar valido." }
+    return { success: false, error: "Informe um placar válido." }
   }
 
   const supabase = createServerClient()
@@ -31,7 +31,7 @@ export async function savePrediction(
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return { success: false, error: "Voce precisa estar logado." }
+    return { success: false, error: "Você precisa estar logado." }
   }
 
   const { data: profileData } = await supabase
@@ -42,7 +42,7 @@ export async function savePrediction(
   const profile = profileData as { is_paid: boolean } | null
 
   if (!profile?.is_paid) {
-    return { success: false, error: "Seu acesso ainda nao foi liberado." }
+    return { success: false, error: "Seu acesso ainda não foi liberado." }
   }
 
   const { data: gameData } = await supabase
@@ -58,30 +58,30 @@ export async function savePrediction(
   } | null
 
   if (!game) {
-    return { success: false, error: "Jogo nao encontrado." }
+    return { success: false, error: "Jogo não encontrado." }
   }
 
   // Bloqueia palpites em jogos já finalizados ou que já tenham placar registrado
   if (game.is_finished === true || game.home_score !== null || game.away_score !== null) {
     return {
       success: false,
-      error: "Este jogo ja foi finalizado ou possui resultado cadastrado. Nao e possivel palpitar."
+      error: "Este jogo já foi finalizado ou possui resultado cadastrado. Não é possível palpitar."
     }
   }
 
-  // match_date vem do banco como timestamptz/UTC; a comparacao fica em epoch UTC.
+  // match_date vem do banco como timestamptz/UTC; a comparação fica em epoch UTC.
   const now = new Date()
   const deadline = new Date(game.match_date).getTime() - 60 * 60 * 1000
 
   if (now.getTime() >= deadline) {
     return {
       success: false,
-      error: "Fora do prazo"
+      error: "Fora do prazo!"
     }
   }
 
-  // O service role evita bloqueio indevido de RLS em jogos de teste ja marcados
-  // como finalizados. A seguranca vem das checagens acima e do user.id da sessao.
+  // O service role evita bloqueio indevido de RLS em jogos de teste já marcados
+  // como finalizados. A segurança vem das checagens acima e do user.id da sessão.
   const { data, error } = await supabaseAdmin
     .from("predictions")
     .upsert(
@@ -98,7 +98,7 @@ export async function savePrediction(
     .single()
 
   if (error || !data) {
-    return { success: false, error: "Nao foi possivel salvar o palpite." }
+    return { success: false, error: "Não foi possível salvar o palpite." }
   }
 
   revalidatePath("/dashboard")
@@ -112,7 +112,7 @@ export async function getUserPredictions(
   const parsed = userIdSchema.safeParse(userId)
 
   if (!parsed.success) {
-    return { success: false, error: "Usuario invalido." }
+    return { success: false, error: "Usuário inválido." }
   }
 
   const supabase = createServerClient()
@@ -121,7 +121,7 @@ export async function getUserPredictions(
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return { success: false, error: "Voce precisa estar logado." }
+    return { success: false, error: "Você precisa estar logado." }
   }
 
   const { data: profileData } = await supabase
@@ -132,7 +132,7 @@ export async function getUserPredictions(
   const profile = profileData as { is_admin: boolean } | null
 
   if (user.id !== parsed.data && !profile?.is_admin) {
-    return { success: false, error: "Voce nao pode acessar estes palpites." }
+    return { success: false, error: "Você não pode acessar estes palpites." }
   }
 
   const { data, error } = await (supabase.from("predictions") as any)
@@ -140,7 +140,7 @@ export async function getUserPredictions(
     .eq("user_id", parsed.data)
 
   if (error) {
-    return { success: false, error: "Nao foi possivel buscar os palpites." }
+    return { success: false, error: "Não foi possível buscar os palpites." }
   }
 
   return { success: true, data: (data ?? []) as Prediction[] }

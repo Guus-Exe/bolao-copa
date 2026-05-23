@@ -38,13 +38,13 @@ export default async function RankingPage() {
           Ranking
         </h1>
         <p className="mt-2 max-w-2xl text-[var(--text-secondary)]">
-          Pontos acumulados, palpites feitos e placares exatos dos usuarios.
+          Pontos acumulados, palpites feitos e placares exatos dos usuários.
         </p>
       </div>
 
       {error && isAdmin ? (
         <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-100">
-          Não foi possivel carregar o ranking. Verifique perfis, palpites e jogos no Supabase.
+          Não foi possível carregar o ranking. Verifique perfis, palpites e jogos no Supabase.
         </div>
       ) : null}
 

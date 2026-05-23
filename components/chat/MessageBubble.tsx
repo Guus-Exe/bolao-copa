@@ -13,7 +13,7 @@ export function MessageBubble({
   isOwnMessage
 }: MessageBubbleProps) {
   // As mensagens usam o profile aninhado vindo do join ou da busca pos-Realtime.
-  const username = message.profiles?.username ?? "usuario"
+  const username = message.profiles?.username ?? "usuário"
   const avatarUrl = message.profiles?.avatar_url ?? null
 
   return (

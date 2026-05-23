@@ -12,7 +12,7 @@ const cardBase =
 export function StatCards({ summary }: StatCardsProps) {
   const stats = [
     {
-      label: "Total de usuarios",
+      label: "Total de usuários",
       value: summary.totalUsers,
       icon: UsersRound
     },

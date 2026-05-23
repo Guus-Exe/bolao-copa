@@ -24,7 +24,7 @@ export function AccountInfo({ email }: { email: string }) {
     <section className="rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface)] p-5">
       <div>
         <h2 className="font-[family-name:var(--font-display)] text-3xl tracking-wide">
-          Informacoes de conta
+          Informações de conta
         </h2>
         <p className="text-sm text-[var(--text-secondary)]">
           Email e senha sao gerenciados pelo Supabase Auth.
@@ -77,7 +77,7 @@ function EmailModal({ onClose }: { onClose: () => void }) {
       })
 
       if (updateError) {
-        setError("Nao foi possivel iniciar a alteracao de email.")
+        setError("Não foi possível iniciar a alteração de email.")
         return
       }
 
@@ -139,7 +139,7 @@ function PasswordModal({ onClose }: { onClose: () => void }) {
       })
 
       if (updateError) {
-        setError("Nao foi possivel alterar a senha.")
+        setError("Não foi possível alterar a senha.")
         return
       }
 

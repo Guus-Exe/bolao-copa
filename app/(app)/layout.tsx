@@ -49,7 +49,7 @@ export default async function AppLayout({
             <Avatar username={username} url={profile?.avatar_url ?? null} />
             <div>
               <span className="block font-[family-name:var(--font-display)] text-3xl tracking-wide">
-                Bolao da Copa
+                Bolão da Copa
               </span>
               <span className="text-sm text-[var(--text-secondary)]">
                 Ola, {username}

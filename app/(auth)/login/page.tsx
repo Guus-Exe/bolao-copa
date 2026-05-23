@@ -13,14 +13,14 @@ export default async function LoginPage(props: Props) {
 
   return (
     <AuthForm
-      title="Entrar no bolao"
+      title="Entrar no bolão"
       description="Use seu email e senha para acessar seus palpites."
       action={signIn}
       buttonLabel="Entrar"
       message={message}
       footer={
         <>
-          Ainda nao tem conta?{" "}
+          Ainda não tem conta?{" "}
           <Link href="/signup" className="font-semibold text-primary">
             Criar conta
           </Link>

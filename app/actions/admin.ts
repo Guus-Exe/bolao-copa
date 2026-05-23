@@ -54,10 +54,10 @@ async function requireAdmin(): Promise<ActionResult<{ userId: string }>> {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return { success: false, error: "Voce precisa estar logado." }
+    return { success: false, error: "Você precisa estar logado." }
   }
 
-  // A permissao e sempre conferida no banco antes de qualquer operacao sensivel.
+  // A permissão é sempre conferida no banco antes de qualquer operação sensível.
   const { data, error } = await supabaseAdmin
     .from("profiles")
     .select("is_admin")
@@ -120,7 +120,7 @@ export async function getAdminSummary(): Promise<ActionResult<AdminSummary>> {
     pendingUsers.error ||
     totalGames.error
   ) {
-    return { success: false, error: "Nao foi possivel carregar o resumo." }
+    return { success: false, error: "Não foi possível carregar o resumo." }
   }
 
   return {
@@ -147,7 +147,7 @@ export async function getAdminGames(): Promise<ActionResult<Game[]>> {
     .order("match_date", { ascending: true })
 
   if (error) {
-    return { success: false, error: "Nao foi possivel carregar os jogos." }
+    return { success: false, error: "Não foi possível carregar os jogos." }
   }
 
   return { success: true, data: (data ?? []) as Game[] }
@@ -166,7 +166,7 @@ export async function getAdminUsers(): Promise<ActionResult<AdminUser[]>> {
     .order("created_at", { ascending: false })
 
   if (error) {
-    return { success: false, error: "Nao foi possivel carregar usuarios." }
+    return { success: false, error: "Não foi possível carregar usuários." }
   }
 
   const {
@@ -175,7 +175,7 @@ export async function getAdminUsers(): Promise<ActionResult<AdminUser[]>> {
   } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 })
 
   if (usersError) {
-    return { success: false, error: "Nao foi possivel carregar emails." }
+    return { success: false, error: "Não foi possível carregar emails." }
   }
 
   const emailById = new Map(users.map((user) => [user.id, user.email ?? ""]))
@@ -184,7 +184,7 @@ export async function getAdminUsers(): Promise<ActionResult<AdminUser[]>> {
     success: true,
     data: (profiles ?? []).map((profile) => ({
       ...(profile as Profile),
-      email: emailById.get(profile.id) ?? "Email nao encontrado"
+      email: emailById.get(profile.id) ?? "Email não encontrado"
     }))
   }
 }
@@ -209,7 +209,7 @@ export async function createGame(input: unknown): Promise<ActionResult<Game>> {
     .single()
 
   if (error || !data) {
-    return { success: false, error: "Nao foi possivel criar o jogo." }
+    return { success: false, error: "Não foi possível criar o jogo." }
   }
 
   revalidatePath("/dashboard")
@@ -232,7 +232,7 @@ export async function updateGame(
   const parsed = adminGameSchema.safeParse(normalizeGameInput(input))
 
   if (!parsedId.success || !parsed.success) {
-    return { success: false, error: "Dados do jogo invalidos." }
+    return { success: false, error: "Dados do jogo inválidos." }
   }
 
   const { data, error } = await supabaseAdmin
@@ -243,7 +243,7 @@ export async function updateGame(
     .single()
 
   if (error || !data) {
-    return { success: false, error: "Nao foi possivel atualizar o jogo." }
+    return { success: false, error: "Não foi possível atualizar o jogo." }
   }
 
   revalidatePath("/dashboard")
@@ -262,7 +262,7 @@ export async function deleteGame(id: string): Promise<ActionResult> {
   const parsed = idSchema.safeParse(id)
 
   if (!parsed.success) {
-    return { success: false, error: "Jogo invalido." }
+    return { success: false, error: "Jogo inválido." }
   }
 
   const { error } = await supabaseAdmin
@@ -271,7 +271,7 @@ export async function deleteGame(id: string): Promise<ActionResult> {
     .eq("id", parsed.data)
 
   if (error) {
-    return { success: false, error: "Nao foi possivel excluir o jogo." }
+    return { success: false, error: "Não foi possível excluir o jogo." }
   }
 
   revalidatePath("/dashboard")
@@ -314,7 +314,7 @@ export async function insertResult(
     .eq("id", parsed.data.gameId)
 
   if (updateError) {
-    return { success: false, error: "Nao foi possivel salvar o resultado." }
+    return { success: false, error: "Não foi possível salvar o resultado." }
   }
 
   const pointsResult = await recalculateGamePoints(
@@ -350,7 +350,7 @@ export async function recalculateGamePoints(
   if (error) {
     return {
       success: false,
-      error: "Resultado salvo, mas a pontuacao nao foi recalculada."
+      error: "Resultado salvo, mas a pontuação não foi recalculada."
     }
   }
 
@@ -378,7 +378,7 @@ export async function recalculateGamePoints(
   if (updates.some((update) => update.error)) {
     return {
       success: false,
-      error: "Resultado salvo, mas a pontuacao nao foi recalculada."
+      error: "Resultado salvo, mas a pontuação não foi recalculada."
     }
   }
 
@@ -395,7 +395,7 @@ export async function clearResult(gameId: string): Promise<ActionResult> {
   const parsed = idSchema.safeParse(gameId)
 
   if (!parsed.success) {
-    return { success: false, error: "Jogo invalido." }
+    return { success: false, error: "Jogo inválido." }
   }
 
   const { error: updateError } = await supabaseAdmin
@@ -408,7 +408,7 @@ export async function clearResult(gameId: string): Promise<ActionResult> {
     .eq("id", parsed.data)
 
   if (updateError) {
-    return { success: false, error: "Nao foi possivel limpar o resultado." }
+    return { success: false, error: "Não foi possível limpar o resultado." }
   }
 
   const { error: predictionsError } = await supabaseAdmin
@@ -419,7 +419,7 @@ export async function clearResult(gameId: string): Promise<ActionResult> {
   if (predictionsError) {
     return {
       success: false,
-      error: "Resultado limpo, mas os pontos nao foram resetados."
+      error: "Resultado limpo, mas os pontos não foram resetados."
     }
   }
 
@@ -443,7 +443,7 @@ export async function toggleUserAccess(
   const parsed = adminUserToggleSchema.safeParse({ userId, value: isPaid })
 
   if (!parsed.success) {
-    return { success: false, error: "Usuario invalido." }
+    return { success: false, error: "Usuário inválido." }
   }
 
   const { error } = await supabaseAdmin
@@ -452,7 +452,7 @@ export async function toggleUserAccess(
     .eq("id", parsed.data.userId)
 
   if (error) {
-    return { success: false, error: "Nao foi possivel alterar o acesso." }
+    return { success: false, error: "Não foi possível alterar o acesso." }
   }
 
   revalidatePath("/dashboard")
@@ -475,13 +475,13 @@ export async function toggleUserAdmin(
   const parsed = adminUserToggleSchema.safeParse({ userId, value: isAdmin })
 
   if (!parsed.success) {
-    return { success: false, error: "Usuario invalido." }
+    return { success: false, error: "Usuário inválido." }
   }
 
   if (admin.data.userId === parsed.data.userId && !parsed.data.value) {
     return {
       success: false,
-      error: "Voce nao pode remover seu proprio acesso admin."
+      error: "Você não pode remover seu próprio acesso admin."
     }
   }
 
@@ -491,7 +491,7 @@ export async function toggleUserAdmin(
     .eq("id", parsed.data.userId)
 
   if (error) {
-    return { success: false, error: "Nao foi possivel alterar admin." }
+    return { success: false, error: "Não foi possível alterar admin." }
   }
 
   revalidateAdminViews()
@@ -509,17 +509,17 @@ export async function deleteUser(userId: string): Promise<ActionResult> {
   const parsed = idSchema.safeParse(userId)
 
   if (!parsed.success) {
-    return { success: false, error: "Usuario invalido." }
+    return { success: false, error: "Usuário inválido." }
   }
 
   if (admin.data.userId === parsed.data) {
-    return { success: false, error: "Voce nao pode excluir sua propria conta." }
+    return { success: false, error: "Você não pode excluir sua própria conta." }
   }
 
   const { error } = await supabaseAdmin.auth.admin.deleteUser(parsed.data)
 
   if (error) {
-    return { success: false, error: "Nao foi possivel excluir o usuario." }
+    return { success: false, error: "Não foi possível excluir o usuário." }
   }
 
   revalidatePath("/ranking")
@@ -540,7 +540,7 @@ export async function getUserPredictionsForAdmin(
   const parsed = idSchema.safeParse(userId)
 
   if (!parsed.success) {
-    return { success: false, error: "Usuario invalido." }
+    return { success: false, error: "Usuário inválido." }
   }
 
   const { data, error } = await (supabaseAdmin.from("predictions") as any)
@@ -551,7 +551,7 @@ export async function getUserPredictionsForAdmin(
     .order("created_at", { ascending: false })
 
   if (error) {
-    return { success: false, error: "Nao foi possivel carregar os palpites." }
+    return { success: false, error: "Não foi possível carregar os palpites." }
   }
 
   return { success: true, data: (data ?? []) as AdminPrediction[] }
@@ -566,7 +566,7 @@ export async function syncGameScore(gameId: string): Promise<ActionResult<{ upda
 
   const parsed = idSchema.safeParse(gameId)
   if (!parsed.success) {
-    return { success: false, error: "Jogo invalido." }
+    return { success: false, error: "Jogo inválido." }
   }
 
   const { data: game, error } = await supabaseAdmin
@@ -576,17 +576,17 @@ export async function syncGameScore(gameId: string): Promise<ActionResult<{ upda
     .single()
 
   if (error || !game) {
-    return { success: false, error: "Jogo nao encontrado." }
+    return { success: false, error: "Jogo não encontrado." }
   }
 
   if (!game.api_fixture_id) {
-    return { success: false, error: "Este jogo nao possui ID da API-Football vinculado." }
+    return { success: false, error: "Este jogo não possui ID da API-Football vinculado." }
   }
 
   try {
     const fixtures = await fetchFixtures([game.api_fixture_id])
     if (fixtures.length === 0) {
-      return { success: false, error: "Partida nao encontrada na API." }
+      return { success: false, error: "Partida não encontrada na API." }
     }
 
     const fixtureData = fixtures[0]
@@ -596,7 +596,7 @@ export async function syncGameScore(gameId: string): Promise<ActionResult<{ upda
     if (!["FT", "AET", "PEN"].includes(status)) {
       return {
         success: false,
-        error: `A partida ainda nao foi finalizada. Status atual: ${status}`
+        error: `A partida ainda não foi finalizada. Status atual: ${status}`
       }
     }
 
@@ -604,7 +604,7 @@ export async function syncGameScore(gameId: string): Promise<ActionResult<{ upda
     const awayScore = fixtureData.goals.away
 
     if (homeScore === null || awayScore === null) {
-      return { success: false, error: "Placar final ainda nao disponivel na API." }
+      return { success: false, error: "Placar final ainda não disponível na API." }
     }
 
     // Reuse insertResult which already handles is_finished, updating DB and recalculating points

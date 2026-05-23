@@ -48,7 +48,7 @@ export default async function AdminLayout({
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-300">
                 Admin
               </p>
-              <h1 className="mt-1 text-2xl font-bold">Bolao da Copa</h1>
+              <h1 className="mt-1 text-2xl font-bold">Bolão da Copa</h1>
             </Link>
             <form action={signOut} className="md:hidden">
               <Button type="submit" size="sm" variant="outline" className="gap-2">
@@ -69,7 +69,7 @@ export default async function AdminLayout({
               Controle
             </AdminLink>
             <AdminLink href="/admin/usuarios" icon={<UsersRound size={17} />}>
-              Usuarios
+              Usuários
             </AdminLink>
             <AdminLink href="/dashboard" icon={<PanelLeftClose size={17} />}>
               Voltar ao dashboard

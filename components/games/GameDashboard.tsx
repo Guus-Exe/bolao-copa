@@ -129,7 +129,7 @@ export function GameDashboard({ games, predictions }: GameDashboardProps) {
             options={[
               ["todos", "Todos os jogos"],
               ["palpitados", "Palpitados"],
-              ["nao-palpitados", "Nao palpitados"]
+              ["nao-palpitados", "Não palpitados"]
             ]}
             value={predictionFilter}
             onChange={(value) => setPredictionFilter(value as PredictionFilter)}

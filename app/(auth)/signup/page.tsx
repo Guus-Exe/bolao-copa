@@ -20,7 +20,7 @@ export default async function SignupPage(props: Props) {
       message={message}
       footer={
         <>
-          Ja tem conta?{" "}
+          Já tem conta?{" "}
           <Link href="/login" className="font-semibold text-primary">
             Entrar
           </Link>

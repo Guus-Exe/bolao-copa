@@ -260,7 +260,7 @@ function getPredictionStatus(
 ) {
   if (!prediction) {
     return {
-      label: "Nao palpitou",
+      label: "Não palpitou",
       className: "border-zinc-500/30 bg-zinc-500/10 text-zinc-300"
     }
   }

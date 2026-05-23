@@ -44,7 +44,7 @@ export default async function DashboardPage() {
 
   const predictionsResult = user
     ? await getUserPredictions(user.id)
-    : { success: false as const, error: "Voce precisa estar logado." }
+    : { success: false as const, error: "Você precisa estar logado." }
 
   const games = (gamesData ?? []) as Game[]
   const predictions = (

@@ -140,7 +140,7 @@ export function AccessControlTable({ users }: AccessControlTableProps) {
       <div className="grid gap-4 md:grid-cols-3">
         <SummaryCard
           icon={<UsersRound size={18} aria-hidden="true" />}
-          label="Total de usuarios cadastrados"
+          label="Total de usuários cadastrados"
           value={rows.length}
           tone="sky"
         />
@@ -161,7 +161,7 @@ export function AccessControlTable({ users }: AccessControlTableProps) {
       <div className="rounded-lg border border-sky-500/20 bg-slate-950/55 p-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h2 className="text-xl font-bold text-white">Usuarios</h2>
+            <h2 className="text-xl font-bold text-white">Usuários</h2>
             <p className="text-sm text-sky-200">
               Filtre, busque e altere a liberacao manual dos participantes.
             </p>
@@ -218,7 +218,7 @@ export function AccessControlTable({ users }: AccessControlTableProps) {
               <TableHead>Email</TableHead>
               <TableHead>Cadastro</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Acoes</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -389,7 +389,7 @@ function ConfirmationDialog({
             <p className="mt-2 text-sm leading-6 text-sky-100">
               {dialog.nextValue
                 ? "O participante podera acessar dashboard, palpites e chat."
-                : "O usuario perdera acesso ao dashboard, palpites e chat imediatamente."}
+                : "O usuário perderá acesso ao dashboard, palpites e chat imediatamente."}
             </p>
           </div>
         </div>

@@ -22,7 +22,7 @@ export default async function AdminUsersPage() {
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-sky-300">
           Painel administrativo
         </p>
-        <h1 className="mt-2 text-4xl font-bold text-white">Usuarios</h1>
+        <h1 className="mt-2 text-4xl font-bold text-white">Usuários</h1>
       </header>
 
       <StatCards summary={summaryResult.data} />

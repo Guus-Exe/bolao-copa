@@ -10,12 +10,12 @@ function encodedMessage(path: string, message: string) {
 }
 
 function getSignUpErrorMessage(error: { code?: string; message: string }) {
-  // Traduz apenas o limite de envio de email para uma mensagem amigavel.
+  // Traduz apenas o limite de envio de email para uma mensagem amigável.
   if (
     error.code === "over_email_send_rate_limit" ||
     error.message.includes("over_email_send_rate_limit")
   ) {
-    return "Muitas tentativas de cadastro. Aguarde alguns minutos e tente novamente."
+    return "Muitas tentativas de cadastro. Tente novamente mais tarde."
   }
 
   return error.message
@@ -28,14 +28,14 @@ export async function signIn(formData: FormData) {
   })
 
   if (!parsed.success) {
-    redirect(encodedMessage("/login", "Informe email e senha validos."))
+    redirect(encodedMessage("/login", "Informe email e senha válidos."))
   }
 
   const supabase = createServerClient()
   const { error } = await supabase.auth.signInWithPassword(parsed.data)
 
   if (error) {
-    redirect(encodedMessage("/login", "Email ou senha invalidos."))
+    redirect(encodedMessage("/login", "Email ou senha inválidos."))
   }
 
   redirect("/dashboard")
@@ -48,7 +48,7 @@ export async function signUp(formData: FormData) {
   })
 
   if (!parsed.success) {
-    redirect(encodedMessage("/signup", "Informe email e senha validos."))
+    redirect(encodedMessage("/signup", "Informe email e senha válidos."))
   }
 
   const supabase = createServerClient()
@@ -61,7 +61,7 @@ export async function signUp(formData: FormData) {
   redirect(
     encodedMessage(
       "/login",
-      "Sua conta ja foi criada. Faca login para continuar."
+      "Conta criada! Faça login para continuar."
     )
   )
 }

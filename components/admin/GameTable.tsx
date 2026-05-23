@@ -141,7 +141,7 @@ export function GameTable({ games }: GameTableProps) {
               <TableHead>Fase</TableHead>
               <TableHead>Resultado</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Acoes</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

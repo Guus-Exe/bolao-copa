@@ -66,7 +66,7 @@ export function UserPredictionsModal({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-sky-300">
-              Palpites do usuario
+              Palpites do usuário
             </p>
             <h2 className="mt-1 text-2xl font-bold">{user.username}</h2>
           </div>
@@ -85,7 +85,7 @@ export function UserPredictionsModal({
             <p className="p-6 text-center text-sm text-red-300">{error}</p>
           ) : predictions.length === 0 ? (
             <p className="p-6 text-center text-sm text-sky-200">
-              Este usuario ainda nao fez palpites.
+              Este usuário ainda não fez palpites.
             </p>
           ) : (
             <Table className="min-w-[720px]">

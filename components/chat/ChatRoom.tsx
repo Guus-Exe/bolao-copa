@@ -92,7 +92,7 @@ export function ChatRoom({
       <header className="flex items-center justify-between gap-4 border-b border-[var(--border-strong)] px-4 py-3">
         <div>
           <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-wide">
-            Chat do Bolao
+            Chat do Bolão
           </h1>
           <p className="text-sm text-[var(--text-secondary)]">
             Converse com os participantes liberados.

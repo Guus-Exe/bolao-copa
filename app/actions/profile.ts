@@ -29,7 +29,7 @@ export async function updateUsername(
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return { success: false, error: "Voce precisa estar logado." }
+    return { success: false, error: "Você precisa estar logado." }
   }
 
   const normalizedUsername = parsed.data.username
@@ -42,11 +42,11 @@ export async function updateUsername(
     .maybeSingle()
 
   if (availabilityError) {
-    return { success: false, error: "Nao foi possivel verificar o apelido." }
+    return { success: false, error: "Não foi possível verificar o apelido." }
   }
 
   if (existingProfile && existingProfile.id !== user.id) {
-    return { success: false, error: "Este apelido ja esta em uso." }
+    return { success: false, error: "Este apelido já está em uso." }
   }
 
   const { error } = await supabaseAdmin
@@ -55,7 +55,7 @@ export async function updateUsername(
     .eq("id", user.id)
 
   if (error) {
-    return { success: false, error: "Nao foi possivel salvar o apelido." }
+    return { success: false, error: "Não foi possível salvar o apelido." }
   }
 
   revalidateProfileViews()
@@ -72,7 +72,7 @@ export async function updateAvatar(
   } = await supabase.auth.getUser()
 
   if (!user) {
-    return { success: false, error: "Voce precisa estar logado." }
+    return { success: false, error: "Você precisa estar logado." }
   }
 
   const file = formData.get("avatar")
@@ -102,7 +102,7 @@ export async function updateAvatar(
     })
 
   if (uploadError) {
-    return { success: false, error: "Nao foi possivel enviar a foto." }
+    return { success: false, error: "Não foi possível enviar a foto." }
   }
 
   const {
@@ -116,7 +116,7 @@ export async function updateAvatar(
     .eq("id", user.id)
 
   if (profileError) {
-    return { success: false, error: "A foto foi enviada, mas o perfil nao foi atualizado." }
+    return { success: false, error: "A foto foi enviada, mas o perfil não foi atualizado." }
   }
 
   revalidateProfileViews()

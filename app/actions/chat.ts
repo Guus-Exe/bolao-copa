@@ -20,7 +20,7 @@ export async function sendMessage(
   if (!parsed.success) {
     return {
       success: false,
-      error: parsed.error.errors[0]?.message ?? "Mensagem invalida."
+      error: parsed.error.errors[0]?.message ?? "Mensagem inválida."
     }
   }
 
@@ -28,7 +28,7 @@ export async function sendMessage(
   const sanitized = chatMessageSchema.safeParse({ content: sanitizedContent })
 
   if (!sanitized.success) {
-    return { success: false, error: "Digite uma mensagem valida." }
+    return { success: false, error: "Digite uma mensagem válida." }
   }
 
   const supabase = createServerClient()
@@ -98,8 +98,8 @@ export async function getChatProfile(
   }
 
   // Busca server-side para nao depender da RLS de profiles no client.
-    const { data, error } = await supabaseAdmin
-      .from("profiles")
+  const { data, error } = await supabaseAdmin
+    .from("profiles")
     .select("username, avatar_url")
     .eq("id", parsed.data)
     .single()

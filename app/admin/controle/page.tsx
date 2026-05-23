@@ -22,7 +22,7 @@ export default async function AdminControlPage() {
           Controle de Acesso
         </h1>
         <p className="mt-2 max-w-2xl text-sky-100">
-          Gerencie quem pode interagir com o bolao.
+          Gerencie quem pode interagir com o bolão.
         </p>
       </header>
 

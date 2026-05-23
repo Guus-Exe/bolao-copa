@@ -97,7 +97,7 @@ export function UserTable({ users }: UserTableProps) {
 
   async function handleDelete(user: AdminUser) {
     setError(null)
-    const first = window.confirm(`Excluir o usuario ${user.username}?`)
+    const first = window.confirm(`Excluir o usuário ${user.username}?`)
 
     if (!first) return
 
@@ -114,14 +114,14 @@ export function UserTable({ users }: UserTableProps) {
       return
     }
 
-    showToast("Usuario excluido com sucesso.")
+    showToast("Usuário excluído com sucesso.")
   }
 
   return (
     <section className="space-y-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h2 className="text-xl font-bold text-white">Gerenciar usuarios</h2>
+          <h2 className="text-xl font-bold text-white">Gerenciar usuários</h2>
           <p className="text-sm text-sky-200">
             Libere acessos, revise admins e acompanhe palpites.
           </p>
@@ -162,7 +162,7 @@ export function UserTable({ users }: UserTableProps) {
               <TableHead>Cadastro</TableHead>
               <TableHead>Pagamento</TableHead>
               <TableHead>Admin</TableHead>
-              <TableHead className="text-right">Acoes</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -191,7 +191,7 @@ export function UserTable({ users }: UserTableProps) {
                   <Toggle
                     checked={user.is_admin}
                     onClick={() => handleAdminToggle(user)}
-                    label={user.is_admin ? "Admin" : "Nao admin"}
+                    label={user.is_admin ? "Admin" : "Não admin"}
                   />
                 </TableCell>
                 <TableCell>
@@ -203,7 +203,7 @@ export function UserTable({ users }: UserTableProps) {
                       <ListChecks size={16} />
                     </IconButton>
                     <IconButton
-                      label="Excluir usuario"
+                      label="Excluir usuário"
                       className="text-red-400 hover:text-red-300"
                       onClick={() => handleDelete(user)}
                     >
@@ -217,7 +217,7 @@ export function UserTable({ users }: UserTableProps) {
         </Table>
         {filteredUsers.length === 0 ? (
           <p className="p-6 text-center text-sm text-sky-200">
-            Nenhum usuario encontrado para este filtro.
+            Nenhum usuário encontrado para este filtro.
           </p>
         ) : null}
       </div>

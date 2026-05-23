@@ -28,7 +28,7 @@ export default async function AdminPage() {
             Painel administrativo
           </p>
           <h1 className="mt-2 text-4xl font-bold text-white">
-            Operacao do bolao
+            Operação do bolão
           </h1>
           <p className="mt-2 max-w-2xl text-sky-100">
             Gerencie jogos, resultados e liberacao dos participantes.
@@ -39,7 +39,7 @@ export default async function AdminPage() {
             <Link href="/admin/jogos">Gerenciar jogos</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link href="/admin/usuarios">Gerenciar usuarios</Link>
+            <Link href="/admin/usuarios">Gerenciar usuários</Link>
           </Button>
         </div>
       </header>
