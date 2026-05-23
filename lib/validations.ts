@@ -3,7 +3,11 @@ import { z } from "zod"
 import { GAME_STAGES } from "@/lib/constants"
 
 export const authSchema = z.object({
-  email: z.string().email("Informe um email valido."),
+  email: z
+    .string()
+    .trim()
+    .email("Informe um email valido.")
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Informe um email completo (ex: .com, .com.br)."),
   password: z.string().min(6, "A senha precisa ter no minimo 6 caracteres.")
 })
 
@@ -18,7 +22,7 @@ export const usernameSchema = z.object({
   username: z
     .string()
     .trim()
-    .min(3, "O apelido precisa ter pelo menos 3 caracteres.")
+    .min(4, "O apelido precisa ter pelo menos 4 caracteres.")
     .max(20, "O apelido pode ter no maximo 20 caracteres.")
     .regex(/^[a-zA-Z0-9_]+$/, "Use apenas letras, numeros e underscore.")
 })
@@ -26,7 +30,11 @@ export const usernameSchema = z.object({
 export const signUpSchema = authSchema.merge(usernameSchema)
 
 export const accountEmailSchema = z.object({
-  email: z.string().trim().email("Informe um email valido.")
+  email: z
+    .string()
+    .trim()
+    .email("Informe um email valido.")
+    .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Informe um email completo (ex: .com, .com.br).")
 })
 
 export const passwordUpdateSchema = z

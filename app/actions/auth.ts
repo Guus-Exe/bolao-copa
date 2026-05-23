@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation"
 
+import { supabaseAdmin } from "@/lib/supabase/admin"
 import { createServerClient } from "@/lib/supabase/server"
 import { authSchema, signUpSchema } from "@/lib/validations"
 
@@ -10,46 +11,95 @@ function encodedMessage(path: string, message: string) {
 }
 
 function getSignUpErrorMessage(error: { code?: string; message: string }) {
-  // Traduz apenas o limite de envio de email para uma mensagem amigável.
   if (
     error.code === "over_email_send_rate_limit" ||
     error.message.includes("over_email_send_rate_limit")
   ) {
     return "Muitas tentativas de cadastro. Tente novamente mais tarde."
   }
-
   return error.message
 }
 
-export async function signIn(formData: FormData) {
-  const parsed = authSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password")
-  })
+export type AuthState = {
+  message?: string
+  errors?: {
+    email?: string[]
+    password?: string[]
+    username?: string[]
+  }
+  data?: {
+    email?: string
+    username?: string
+  }
+} | null
+
+export async function signIn(prevState: AuthState, formData: FormData): Promise<AuthState> {
+  const data = {
+    email: formData.get("email") as string,
+    password: formData.get("password") as string
+  }
+
+  const parsed = authSchema.safeParse(data)
 
   if (!parsed.success) {
-    redirect(encodedMessage("/login", "Informe email e senha válidos."))
+    return {
+      message: "Verifique os campos abaixo e tente novamente.",
+      errors: parsed.error.flatten().fieldErrors,
+      data: { email: data.email }
+    }
   }
 
   const supabase = createServerClient()
   const { error } = await supabase.auth.signInWithPassword(parsed.data)
 
   if (error) {
-    redirect(encodedMessage("/login", "Email ou senha inválidos."))
+    return { 
+      message: "Email ou senha inválidos.",
+      data: { email: data.email }
+    }
   }
 
   redirect("/dashboard")
 }
 
-export async function signUp(formData: FormData) {
-  const parsed = signUpSchema.safeParse({
-    email: formData.get("email"),
-    password: formData.get("password"),
-    username: formData.get("username")
-  })
+export async function signUp(prevState: AuthState, formData: FormData): Promise<AuthState> {
+  const data = {
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+    username: formData.get("username") as string
+  }
+
+  const parsed = signUpSchema.safeParse(data)
 
   if (!parsed.success) {
-    redirect(encodedMessage("/signup", "Dados inválidos. Verifique os campos e tente novamente."))
+    return {
+      message: "Verifique os campos abaixo e tente novamente.",
+      errors: parsed.error.flatten().fieldErrors,
+      data: { email: data.email, username: data.username }
+    }
+  }
+
+  const { data: existingProfile, error: availabilityError } = await supabaseAdmin
+    .from("profiles")
+    .select("id")
+    .eq("username", parsed.data.username)
+    .maybeSingle()
+
+  if (availabilityError) {
+    return { 
+      message: "Não foi possível verificar o apelido.",
+      data: { email: data.email, username: data.username }
+    }
+  }
+
+  if (existingProfile) {
+    return {
+      message: "Erro no cadastro.",
+      errors: {
+        username: ["Este apelido já está em uso. Escolha outro."]
+      },
+      data: { email: data.email, username: data.username }
+    }
   }
 
   const supabase = createServerClient()
@@ -64,15 +114,22 @@ export async function signUp(formData: FormData) {
   })
 
   if (error) {
-    redirect(encodedMessage("/signup", getSignUpErrorMessage(error)))
+    if (error.code === "user_already_exists") {
+      return {
+        message: "Erro no cadastro.",
+        errors: {
+          email: ["Este email já está cadastrado."]
+        },
+        data: { email: data.email, username: data.username }
+      }
+    }
+    return { 
+      message: getSignUpErrorMessage(error),
+      data: { email: data.email, username: data.username }
+    }
   }
 
-  redirect(
-    encodedMessage(
-      "/login",
-      "Conta criada! Faça login para continuar."
-    )
-  )
+  redirect(encodedMessage("/login", "Conta criada! Faça login para continuar."))
 }
 
 export async function signOut() {

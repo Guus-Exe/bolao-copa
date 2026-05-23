@@ -20,7 +20,7 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="bg-[var(--bg-base)] px-6 py-16 sm:px-8 lg:px-10">
+    <section id="how-it-works" className="bg-[var(--bg-base)] px-6 py-16 sm:px-8 lg:px-10">
       <div className="mx-auto max-w-7xl">
         {/* Secao educativa com tres passos curtos para leitura rapida. */}
         <div className="max-w-2xl">

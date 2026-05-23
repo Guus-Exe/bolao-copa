@@ -1,5 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
+import { ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 
@@ -51,6 +52,12 @@ export function Hero() {
             className="relative object-contain drop-shadow-[0_28px_60px_rgba(34,197,94,0.24)]"
           />
         </div>
+      </div>
+
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <a href="#how-it-works" aria-label="Rolar para baixo" className="block p-2 text-[var(--text-secondary)] opacity-60 hover:opacity-100 transition-opacity">
+          <ChevronDown className="h-8 w-8" />
+        </a>
       </div>
     </section>
   )
