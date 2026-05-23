@@ -7,6 +7,7 @@ export const authSchema = z.object({
   password: z.string().min(8, "A senha precisa ter no minimo 8 caracteres.")
 })
 
+
 export const predictionSchema = z.object({
   gameId: z.string().uuid(),
   homeScore: z.number().int().min(0).max(20),
@@ -21,6 +22,8 @@ export const usernameSchema = z.object({
     .max(20, "O apelido pode ter no maximo 20 caracteres.")
     .regex(/^[a-zA-Z0-9_]+$/, "Use apenas letras, numeros e underscore.")
 })
+
+export const signUpSchema = authSchema.merge(usernameSchema)
 
 export const accountEmailSchema = z.object({
   email: z.string().trim().email("Informe um email valido.")

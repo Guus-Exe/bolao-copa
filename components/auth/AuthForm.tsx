@@ -20,6 +20,7 @@ type AuthFormProps = {
   buttonLabel: string
   message?: string
   footer: ReactNode
+  showUsername?: boolean
 }
 
 export function AuthForm({
@@ -28,7 +29,8 @@ export function AuthForm({
   action,
   buttonLabel,
   message,
-  footer
+  footer,
+  showUsername
 }: AuthFormProps) {
   return (
     <main className="flex min-h-screen items-center justify-center bg-[var(--bg-base)] px-4 py-12">
@@ -53,6 +55,21 @@ export function AuthForm({
             </p>
           ) : null}
           <form action={action} className="space-y-4">
+            {showUsername && (
+              <div className="space-y-2">
+                <Label htmlFor="username">Apelido</Label>
+                <Input
+                  id="username"
+                  name="username"
+                  type="text"
+                  autoComplete="username"
+                  required
+                  placeholder="Seu apelido"
+                  minLength={3}
+                  maxLength={20}
+                />
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input

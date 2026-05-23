@@ -18,6 +18,7 @@ export default async function SignupPage(props: Props) {
       action={signUp}
       buttonLabel="Criar conta"
       message={message}
+      showUsername
       footer={
         <>
           Já tem conta?{" "}
