@@ -12,6 +12,7 @@ export const WORLD_CUP_LEAGUE_ID = 1
 // Estamos usando 2022 temporariamente para testar a integração. Mude para 2026 depois.
 export const WORLD_CUP_SEASON = 2022
 
+
 // --------------- Tipos ---------------
 
 /** Resposta mínima usada por syncGameScore / cron (já existia) */
