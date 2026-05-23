@@ -304,7 +304,7 @@ export function extractGamesFromText(rawText: string): ExtractionResult {
       away_team:   toPT(awayEn),
       home_flag:   getFlag(homeEn),
       away_flag:   getFlag(awayEn),
-      match_date:  `${dateStr}T${utcTime}:00Z`,
+      match_date:  `${dateStr}T${utcTime}:00-03:00`,
       stage:       currentStage,
       group_name:  null,
       home_score:  null,
