@@ -54,10 +54,12 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <a href="#how-it-works" aria-label="Rolar para baixo" className="block p-2 text-[var(--text-secondary)] opacity-60 hover:opacity-100 transition-opacity">
-          <ChevronDown className="h-8 w-8" />
-        </a>
+      <div className="absolute inset-x-0 bottom-8 flex justify-center">
+        <div className="animate-bounce">
+          <a href="#how-it-works" aria-label="Rolar para baixo" className="block p-2 text-[var(--text-secondary)] opacity-60 hover:opacity-100 transition-opacity">
+            <ChevronDown className="h-8 w-8" />
+          </a>
+        </div>
       </div>
     </section>
   )
