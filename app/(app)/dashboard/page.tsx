@@ -5,6 +5,8 @@ import { GameDashboard } from "@/components/games/GameDashboard"
 import { createServerClient } from "@/lib/supabase/server"
 import type { Game, Prediction } from "@/types"
 
+import { PendingAccess } from "@/components/PendingAccess"
+
 export default async function DashboardPage() {
   const supabase = createServerClient()
   const {
@@ -23,20 +25,7 @@ export default async function DashboardPage() {
   } | null
 
   if (!profile?.is_paid) {
-    return (
-      <section className="rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface)] p-6">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[var(--text-secondary)]">
-          Acesso pendente
-        </p>
-        <h1 className="mt-2 font-[family-name:var(--font-display)] text-5xl tracking-wide">
-          Aguarde a liberação do admin
-        </h1>
-        <p className="mt-3 max-w-2xl text-[var(--text-secondary)]">
-          Sua conta já existe, mas ainda não foi marcada como paga. Quando o
-          admin liberar, os jogos e palpites aparecem aqui.
-        </p>
-      </section>
-    )
+    return <PendingAccess />
   }
 
   let pendingUsersCount = 0

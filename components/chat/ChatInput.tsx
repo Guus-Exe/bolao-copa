@@ -76,7 +76,7 @@ export function ChatInput({
             placeholder={
               canSend
                 ? "Escreva sua mensagem..."
-                : "Acesso liberado apenas para participantes pagos"
+                : "Aguardando liberação de acesso..."
             }
             rows={1}
             value={value}
