@@ -42,9 +42,13 @@ export function GameCard({
   const status = getPredictionStatus(prediction, isFinished, earnedPoints)
   const submitLabel = prediction ? "Alterar palpite" : "Salvar palpite"
   const [isShaking, setIsShaking] = useState(false)
+  const [isAnimatingButton, setIsAnimatingButton] = useState(false)
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    setIsAnimatingButton(true)
+    setTimeout(() => setIsAnimatingButton(false), 1000)
 
     if (homeScore.trim() === "" || awayScore.trim() === "") {
       setIsShaking(true)
@@ -165,7 +169,12 @@ export function GameCard({
               type="submit"
               size="sm"
               disabled={isPending}
-              className="h-10 w-full bg-[var(--green-500)] border border-[var(--green-500)] text-black text-sm font-bold shadow-[0_0_10px_var(--green-glow)] hover:bg-black hover:text-[var(--green-500)] hover:shadow-[0_0_20px_var(--green-glow)] transition-all duration-300"
+              className={cn(
+                "h-10 w-full border text-sm font-bold transition-all duration-300",
+                isAnimatingButton || isPending
+                  ? "bg-black border-[var(--green-500)] text-[var(--green-500)] shadow-[0_0_20px_var(--green-glow)]"
+                  : "bg-[var(--green-500)] border-[var(--green-500)] text-black shadow-[0_0_10px_var(--green-glow)] hover:bg-black hover:text-[var(--green-500)] hover:shadow-[0_0_20px_var(--green-glow)]"
+              )}
             >
               {isPending ? "Salvando..." : submitLabel}
             </Button>
