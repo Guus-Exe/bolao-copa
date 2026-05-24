@@ -34,15 +34,24 @@ export function GameCard({
   const matchDate = new Date(game.match_date)
   const hasResult = game.home_score !== null && game.away_score !== null
   const isFinished = game.is_finished && hasResult
-  const isDeadlineClosed =
-    new Date().getTime() >= matchDate.getTime() - 60 * 60 * 1000
   const deadlineDate = new Date(matchDate.getTime() - 60 * 60 * 1000)
+  const nowTime = new Date().getTime()
+  const isDeadlineClosed = nowTime >= deadlineDate.getTime()
+  const isUrgent = !isDeadlineClosed && (deadlineDate.getTime() - nowTime < 2 * 60 * 60 * 1000)
   const earnedPoints = getPoints(game, prediction)
   const status = getPredictionStatus(prediction, isFinished, earnedPoints)
-  const submitLabel = prediction ? "Alterar palpite ↗" : "Salvar palpite ↗"
+  const submitLabel = prediction ? "Alterar palpite" : "Salvar palpite"
+  const [isShaking, setIsShaking] = useState(false)
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    if (homeScore.trim() === "" || awayScore.trim() === "") {
+      setIsShaking(true)
+      setTimeout(() => setIsShaking(false), 500)
+      onError("Preencha o placar completo para salvar.")
+      return
+    }
 
     const parsedHome = Number(homeScore)
     const parsedAway = Number(awayScore)
@@ -65,7 +74,14 @@ export function GameCard({
   }
 
   return (
-    <article className="rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface)] p-5 transition-colors hover:border-[var(--border-hover)]">
+    <article
+      className={cn(
+        "rounded-lg border bg-[var(--bg-surface)] p-5 transition-all duration-300",
+        isUrgent
+          ? "border-red-500/60 shadow-[0_0_20px_rgba(239,68,68,0.15)]"
+          : "border-[var(--border-strong)] hover:border-[var(--border-hover)]"
+      )}
+    >
       <div className="flex items-start justify-between gap-3">
         <span
           className={cn(
@@ -121,19 +137,17 @@ export function GameCard({
           Seu palpite
         </p>
 
-        <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-end gap-4">
+        <div className={cn("mt-5 flex items-center justify-center gap-6", isShaking && "animate-shake")}>
           <PredictionField
-            label={game.home_flag}
             team={game.home_team}
             value={homeScore}
             disabled={isDeadlineClosed || isPending}
             onChange={setHomeScore}
           />
-          <span className="mb-3 text-xl font-black text-[var(--green-500)]">
+          <span className="text-xl font-black text-[var(--green-500)]">
             ×
           </span>
           <PredictionField
-            label={game.away_flag}
             team={game.away_team}
             value={awayScore}
             disabled={isDeadlineClosed || isPending}
@@ -151,8 +165,7 @@ export function GameCard({
               type="submit"
               size="sm"
               disabled={isPending}
-              variant="outline"
-              className="h-9 w-full border-[var(--border-hover)] bg-transparent text-sm font-bold text-[var(--text-primary)] hover:bg-[var(--bg-elevated)]"
+              className="h-10 w-full bg-[var(--green-500)] border border-[var(--green-500)] text-black text-sm font-bold shadow-[0_0_10px_var(--green-glow)] hover:bg-black hover:text-[var(--green-500)] hover:shadow-[0_0_20px_var(--green-glow)] transition-all duration-300"
             >
               {isPending ? "Salvando..." : submitLabel}
             </Button>
@@ -164,26 +177,21 @@ export function GameCard({
 }
 
 function PredictionField({
-  label,
   team,
   value,
   disabled,
   onChange
 }: {
-  label: string
   team: string
   value: string
   disabled: boolean
   onChange: (value: string) => void
 }) {
   return (
-    <label className="block min-w-0">
-      <span className="mb-2 block truncate text-center text-xs font-semibold text-[var(--text-secondary)]">
-        {label}
-      </span>
+    <label className="block">
       <Input
         aria-label={`Palpite para ${team}`}
-        className="prediction-score-input h-10 appearance-none text-center text-lg font-bold [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+        className="prediction-score-input h-16 w-16 appearance-none text-center text-3xl font-black transition-all focus:border-[var(--green-500)] focus:shadow-[0_0_15px_var(--green-glow)] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         disabled={disabled}
         inputMode="numeric"
         max={20}
@@ -261,7 +269,7 @@ function getPredictionStatus(
   if (!prediction) {
     return {
       label: "Não palpitou",
-      className: "border-zinc-500/30 bg-zinc-500/10 text-zinc-300"
+      className: "border-yellow-500/30 bg-yellow-500/10 text-yellow-300"
     }
   }
 

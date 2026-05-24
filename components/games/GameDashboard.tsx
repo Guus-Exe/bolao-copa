@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { Game, Prediction } from "@/types"
 
-type StageFilter = "todos" | "grupos" | "mata-mata"
+type StatusFilter = "todos" | "abertos" | "andamento" | "concluidos"
 type PredictionFilter = "todos" | "palpitados" | "nao-palpitados"
 
 type GameDashboardProps = {
@@ -26,7 +26,7 @@ const STAGE_LABELS: Record<string, string> = {
 const STAGE_ORDER = ["grupo", "oitavas", "quartas", "semi", "final"]
 
 export function GameDashboard({ games, predictions }: GameDashboardProps) {
-  const [stageFilter, setStageFilter] = useState<StageFilter>("todos")
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("todos")
   const [predictionFilter, setPredictionFilter] =
     useState<PredictionFilter>("todos")
   const [savedPredictions, setSavedPredictions] = useState(predictions)
@@ -47,16 +47,19 @@ export function GameDashboard({ games, predictions }: GameDashboardProps) {
     return games
       .filter((game) => {
         const hasPrediction = predictionByGameId.has(game.id)
-        const matchesStage =
-          stageFilter === "todos" ||
-          (stageFilter === "grupos" && game.stage === "grupo") ||
-          (stageFilter === "mata-mata" && game.stage !== "grupo")
+        const isClosed = now >= new Date(game.match_date).getTime() - 60 * 60 * 1000
+        const isFinished = game.is_finished && game.home_score !== null && game.away_score !== null
+        const matchesStatus =
+          statusFilter === "todos" ||
+          (statusFilter === "abertos" && !isClosed && !isFinished) ||
+          (statusFilter === "andamento" && isClosed && !isFinished) ||
+          (statusFilter === "concluidos" && isFinished)
         const matchesPrediction =
           predictionFilter === "todos" ||
           (predictionFilter === "palpitados" && hasPrediction) ||
           (predictionFilter === "nao-palpitados" && !hasPrediction)
 
-        return matchesStage && matchesPrediction
+        return matchesStatus && matchesPrediction
       })
       .sort((a, b) => {
         const timeA = new Date(a.match_date).getTime()
@@ -64,6 +67,12 @@ export function GameDashboard({ games, predictions }: GameDashboardProps) {
 
         const isClosedA = now >= timeA - 60 * 60 * 1000
         const isClosedB = now >= timeB - 60 * 60 * 1000
+
+        const isFinishedA = a.is_finished && a.home_score !== null && a.away_score !== null
+        const isFinishedB = b.is_finished && b.home_score !== null && b.away_score !== null
+
+        if (isFinishedA && !isFinishedB) return 1
+        if (!isFinishedA && isFinishedB) return -1
 
         if (isClosedA && !isClosedB) return 1
         if (!isClosedA && isClosedB) return -1
@@ -74,7 +83,7 @@ export function GameDashboard({ games, predictions }: GameDashboardProps) {
 
         return timeB - timeA
       })
-  }, [games, predictionByGameId, predictionFilter, stageFilter])
+  }, [games, predictionByGameId, predictionFilter, statusFilter])
 
   const gamesByStage = useMemo(() => {
     return STAGE_ORDER.map((stage) => ({
@@ -119,11 +128,12 @@ export function GameDashboard({ games, predictions }: GameDashboardProps) {
           <FilterGroup
             options={[
               ["todos", "Todos"],
-              ["grupos", "Grupos"],
-              ["mata-mata", "Mata-mata"]
+              ["abertos", "Abertos"],
+              ["andamento", "Em andamento"],
+              ["concluidos", "Concluídos"]
             ]}
-            value={stageFilter}
-            onChange={(value) => setStageFilter(value as StageFilter)}
+            value={statusFilter}
+            onChange={(value) => setStatusFilter(value as StatusFilter)}
           />
           <FilterGroup
             options={[

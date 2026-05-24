@@ -134,7 +134,7 @@ export default function RegrasPage() {
             <h3 className="font-semibold text-[var(--text-primary)]">Atenção aos Prazos</h3>
             <p className="text-sm text-[var(--text-secondary)] mt-1">
               Os palpites para cada jogo só podem ser incluídos ou alterados até 1 hora antes do início da partida.
-              Após o início do jogo, os palpites são bloqueados.
+              Após esse prazo, os palpites ficam bloqueados e não podem mais ser modificados.
             </p>
           </div>
         </div>
