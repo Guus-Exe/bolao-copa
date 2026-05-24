@@ -49,6 +49,7 @@ Next.js App Router · TypeScript · Tailwind CSS · shadcn/ui · Supabase Auth �
 
 ## Regras gerais de comportamento
 
+- **Medida de Segurança (DB):** Se o usuário solicitar a limpeza ou deleção de dados em qualquer tabela do banco de dados, você DEVE investigar o código do projeto e a estrutura do banco (schema) para mapear os **impactos diretos e indiretos** (ex: views que podem quebrar, integridade referencial, recursos na UI afetados). Em seguida, pare, apresente uma análise clara desses impactos e exija uma **confirmação explícita** antes de executar qualquer comando destrutivo.
 - **Modo silencioso:** ao usar `replace_file_content` ou `write_to_file`, não explique nem resuma. Apenas execute.
 - Trabalhe em **etapas pequenas**. Nunca implemente tudo de uma vez.
 - Ao final de cada etapa: liste arquivos alterados, como testar e qual é o próximo passo.

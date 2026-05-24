@@ -51,7 +51,7 @@ export const chatMessageSchema = z.object({
   content: z
     .string()
     .trim()
-    .min(1, "Digite uma mensagem antes de enviar.")
+    .min(1, "Digite uma mensagem.")
     .max(500, "A mensagem pode ter no maximo 500 caracteres.")
 })
 

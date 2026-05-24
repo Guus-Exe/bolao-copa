@@ -17,7 +17,7 @@ const emojiSchema = z.string().min(1).max(10) // Em caso de emojis compostos
 export async function sendMessage(
   content: unknown
 ): Promise<ActionResult<ChatMessage>> {
-  const parsed = chatMessageSchema.safeParse({ content })
+  const parsed = chatMessageSchema.safeParse({ content: content || "" })
 
   if (!parsed.success) {
     return {
@@ -26,7 +26,7 @@ export async function sendMessage(
     }
   }
 
-  const sanitizedContent = sanitizeMessage(parsed.data.content)
+  const sanitizedContent = sanitizeMessage(parsed.data.content || "")
   const sanitized = chatMessageSchema.safeParse({ content: sanitizedContent })
 
   if (!sanitized.success) {
@@ -58,12 +58,13 @@ export async function sendMessage(
     .from("chat_messages")
     .insert({
       user_id: user.id,
-      content: sanitized.data.content
+      content: sanitized.data.content || ""
     })
     .select("*")
     .single()
 
   if (error || !data) {
+    console.error("Erro ao inserir mensagem no DB:", error)
     return { success: false, error: "Não foi possível enviar a mensagem." }
   }
 

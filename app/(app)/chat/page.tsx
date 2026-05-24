@@ -41,7 +41,7 @@ export default async function ChatPage() {
     ((profilesData ?? []) as ProfileRow[]).map((item) => [item.id, item])
   )
 
-  const initialMessages = messages.map((message) => {
+  const initialMessages: ChatMessageWithProfile[] = messages.map((message) => {
     const messageProfile = profilesById.get(message.user_id)
 
     return {
