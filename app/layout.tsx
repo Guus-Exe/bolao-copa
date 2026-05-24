@@ -34,7 +34,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR" className={`${display.variable} ${body.variable} scroll-smooth`}>
+    <html lang="pt-BR" className={`${display.variable} ${body.variable} scroll-smooth`} data-scroll-behavior="smooth">
       <body className="min-h-screen font-[family-name:var(--font-body)]">
         {children}
         <BackToTop />

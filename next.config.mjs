@@ -54,14 +54,14 @@ const nextConfig = {
               "default-src 'self'",
               // Imagens: proprias, data URIs, blobs, Supabase Storage e flagcdn.com
               "img-src 'self' data: blob: https://*.supabase.co https://flagcdn.com",
-              // Scripts: Next.js requer unsafe-inline/eval para RSC no v14
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              // Scripts: Next.js requer unsafe-inline/eval para RSC no v14, e va.vercel-scripts.com para Speed Insights
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com",
               // Estilos: proprios, inline (Tailwind) e Google Fonts
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               // Fontes do Google
               "font-src 'self' https://fonts.gstatic.com",
-              // Conexoes: API Supabase + Realtime WebSocket
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+              // Conexoes: API Supabase + Realtime WebSocket + Vercel Insights
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://vitals.vercel-insights.com",
               // Formularios: apenas proprios
               "form-action 'self'",
               // Bloqueia embeds de objetos

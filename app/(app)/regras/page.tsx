@@ -118,8 +118,8 @@ export default function RegrasPage() {
               <li className="flex items-start gap-4 rounded-lg bg-[var(--bg-elevated)] p-4">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--green-700)] text-white font-bold">4</div>
                 <div>
-                  <h4 className="font-semibold text-[var(--text-primary)]">Sorteio</h4>
-                  <p className="text-sm text-[var(--text-muted)]">Como último critério, será realizado um sorteio ou ordem alfabética de inscrição.</p>
+                  <h4 className="font-semibold text-[var(--text-primary)]">Data do Palpite</h4>
+                  <p className="text-sm text-[var(--text-muted)]">Como último critério, leva vantagem quem tiver realizado seu primeiro palpite antes (ordem cronológica).</p>
                 </div>
               </li>
             </ul>
@@ -128,14 +128,28 @@ export default function RegrasPage() {
       </section>
 
       <section className="space-y-6 pt-6">
-        <div className="flex items-start gap-4 rounded-xl border border-[var(--landing-border)] bg-[var(--green-glow)] p-6">
-          <AlertTriangle className="mt-1 text-[var(--green-500)] shrink-0" size={24} />
-          <div>
-            <h3 className="font-semibold text-[var(--text-primary)]">Atenção aos Prazos</h3>
-            <p className="text-sm text-[var(--text-secondary)] mt-1">
-              Os palpites para cada jogo só podem ser incluídos ou alterados até 1 hora antes do início da partida.
-              Após esse prazo, os palpites ficam bloqueados e não podem mais ser modificados.
-            </p>
+        <div className="flex flex-col gap-4 md:flex-row">
+          <div className="flex flex-1 items-start gap-4 rounded-xl border border-[var(--landing-border)] bg-[var(--bg-elevated)] p-6">
+            <AlertTriangle className="mt-1 text-[var(--yellow-500)] shrink-0" size={24} />
+            <div>
+              <h3 className="font-semibold text-[var(--text-primary)]">Mata-Mata, Prorrogação e Pênaltis</h3>
+              <p className="text-sm text-[var(--text-secondary)] mt-1">
+                Nas fases eliminatórias (Oitavas de Final em diante), o placar que vale para o bolão é o do <strong>Tempo Regulamentar + Prorrogação</strong>. 
+                <br /><br />
+                Vitórias conquistadas na disputa de Pênaltis <strong>não contam no placar</strong>, sendo a partida considerada um "Empate" para fins de pontuação no bolão.
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex flex-1 items-start gap-4 rounded-xl border border-[var(--green-500)] bg-[var(--green-glow)] p-6">
+            <AlertTriangle className="mt-1 text-[var(--green-500)] shrink-0" size={24} />
+            <div>
+              <h3 className="font-semibold text-[var(--text-primary)]">Atenção aos Prazos</h3>
+              <p className="text-sm text-[var(--text-secondary)] mt-1">
+                Os palpites para cada jogo só podem ser incluídos ou alterados até 1 hora antes do início da partida.
+                Após esse prazo, os palpites ficam bloqueados e não podem mais ser modificados.
+              </p>
+            </div>
           </div>
         </div>
       </section>

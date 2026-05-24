@@ -22,7 +22,7 @@ export async function getRankingEntries(): Promise<{
   const { data: rankingData, error: viewError } = await supabaseAdmin
     .from("ranking_view")
     .select(
-      "user_id, username, avatar_url, total_points, total_predictions, exact_scores, exact_scores_hosts, exact_scores_brazil, correct_predictions, position"
+      "user_id, username, avatar_url, total_points, total_predictions, exact_scores, exact_scores_hosts, exact_scores_brazil, correct_predictions, position, first_prediction_at"
     )
     .order("position", { ascending: true })
 
@@ -37,7 +37,7 @@ export async function getRankingEntries(): Promise<{
     // Busca perfis liberados (is_paid = true)
     const { data: profiles, error: pError } = await supabaseAdmin
       .from("profiles")
-      .select("id, username, avatar_url")
+      .select("id, username, avatar_url, created_at")
       .eq("is_paid", true)
 
     if (pError || !profiles) throw pError || new Error("Erro ao obter perfis")
@@ -50,6 +50,7 @@ export async function getRankingEntries(): Promise<{
         points_earned,
         predicted_home_score,
         predicted_away_score,
+        created_at,
         game:games(home_team, away_team, home_score, away_score, is_finished)
       `)
 
@@ -71,8 +72,13 @@ export async function getRankingEntries(): Promise<{
       let exactScoresHosts = 0
       let exactScoresBrazil = 0
       let correctPredictions = 0
+      let firstPredictionAt = profile.created_at
 
       userPreds.forEach((pred) => {
+        if (pred.created_at < firstPredictionAt) {
+          firstPredictionAt = pred.created_at
+        }
+        
         const points = pred.points_earned ?? 0
         totalPoints += points
         if (points > 0) {
@@ -112,16 +118,22 @@ export async function getRankingEntries(): Promise<{
         exact_scores_hosts: exactScoresHosts,
         exact_scores_brazil: exactScoresBrazil,
         correct_predictions: correctPredictions,
+        first_prediction_at: firstPredictionAt,
         position: 0
       }
     })
 
-    // Ordena de acordo com o criterio: pontos -> placares exatos -> placares exatos anfitriões -> placares exatos brasil
+    // Ordena de acordo com o criterio: pontos -> placares exatos -> placares exatos anfitriões -> placares exatos brasil -> data do primeiro palpite
     entries.sort((a, b) => {
       if (b.total_points !== a.total_points) return b.total_points - a.total_points
       if (b.exact_scores !== a.exact_scores) return b.exact_scores - a.exact_scores
       if (b.exact_scores_hosts !== a.exact_scores_hosts) return b.exact_scores_hosts - a.exact_scores_hosts
       if (b.exact_scores_brazil !== a.exact_scores_brazil) return b.exact_scores_brazil - a.exact_scores_brazil
+      
+      const timeA = new Date(a.first_prediction_at).getTime()
+      const timeB = new Date(b.first_prediction_at).getTime()
+      if (timeA !== timeB) return timeA - timeB
+
       return a.username.localeCompare(b.username)
     })
 

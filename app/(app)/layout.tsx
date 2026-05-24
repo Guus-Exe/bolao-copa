@@ -72,26 +72,24 @@ export default async function AppLayout({
 
           <div className="flex items-center gap-3">
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 rounded-full border border-[var(--border-strong)] bg-[var(--bg-elevated)] py-1 pl-4 pr-1 ring-offset-[var(--bg-base)] transition-all hover:border-[var(--border-hover)] hover:bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--green-500)]">
-                  <span className="max-w-[100px] truncate text-sm font-medium text-[var(--text-secondary)] sm:max-w-[150px] md:max-w-[200px]">
-                    {username}
+              <DropdownMenuTrigger className="flex items-center gap-2 rounded-full border border-[var(--border-strong)] bg-[var(--bg-elevated)] py-1 pl-4 pr-1 ring-offset-[var(--bg-base)] transition-all hover:border-[var(--border-hover)] hover:bg-[var(--bg-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--green-500)]">
+                <span className="max-w-[100px] truncate text-sm font-medium text-[var(--text-secondary)] sm:max-w-[150px] md:max-w-[200px]">
+                  {username}
+                </span>
+                {isTopPosition && (
+                  <span
+                    className={cn(
+                      "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold shadow-sm",
+                      userPosition === 1 ? "bg-yellow-400 text-yellow-950" : "",
+                      userPosition === 2 ? "bg-slate-300 text-slate-900" : "",
+                      userPosition === 3 ? "bg-amber-600 text-amber-50" : "",
+                      userPosition === 4 ? "bg-[var(--green-500)] text-white" : ""
+                    )}
+                  >
+                    {userPosition}º
                   </span>
-                  {isTopPosition && (
-                    <span
-                      className={cn(
-                        "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold shadow-sm",
-                        userPosition === 1 ? "bg-yellow-400 text-yellow-950" : "",
-                        userPosition === 2 ? "bg-slate-300 text-slate-900" : "",
-                        userPosition === 3 ? "bg-amber-600 text-amber-50" : "",
-                        userPosition === 4 ? "bg-[var(--green-500)] text-white" : ""
-                      )}
-                    >
-                      {userPosition}º
-                    </span>
-                  )}
-                  <Avatar username={username} url={profile?.avatar_url ?? null} />
-                </button>
+                )}
+                <Avatar username={username} url={profile?.avatar_url ?? null} />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 bg-[var(--bg-elevated)] text-[var(--text-primary)] border-[var(--border-strong)]">
                 <DropdownMenuLabel className="font-normal">

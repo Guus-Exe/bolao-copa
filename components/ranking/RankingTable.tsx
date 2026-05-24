@@ -2,6 +2,8 @@ import type { RankingEntry } from "@/types"
 import { RankingRow, formatPosition, topPositionClasses } from "@/components/ranking/RankingRow"
 import { RankingAvatar } from "@/components/ranking/RankingAvatar"
 import { cn } from "@/lib/utils"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Info } from "lucide-react"
 
 type RankingTableProps = {
   entries: RankingEntry[]
@@ -85,9 +87,27 @@ export function RankingTable({
               </div>
 
               <div className="grid grid-cols-3 gap-2 border-t border-[var(--border-strong)] pt-3 text-center">
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">Pontos</span>
-                  <span className="text-lg font-black text-green-200">{entry.total_points}</span>
+                <div className="flex flex-col items-center">
+                  <span className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider mb-0.5">Pontos</span>
+                  <div className="flex items-center gap-1.5">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button type="button" className="text-[var(--text-secondary)] active:text-green-300 transition-colors" aria-label="Ver critérios de desempate">
+                          <Info size={14} />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent side="top" className="w-[280px] p-4 text-sm bg-[var(--bg-elevated)] border-[var(--border-strong)] shadow-xl">
+                        <p className="font-semibold mb-2 text-[var(--text-primary)]">Critérios de Desempate:</p>
+                        <ul className="space-y-1 text-[var(--text-secondary)] text-left">
+                          <li>1. Exatos (Geral): <strong className="text-[var(--text-primary)]">{entry.exact_scores}</strong></li>
+                          <li>2. Exatos (Anfitriões): <strong className="text-[var(--text-primary)]">{entry.exact_scores_hosts}</strong></li>
+                          <li>3. Exatos (Brasil): <strong className="text-[var(--text-primary)]">{entry.exact_scores_brazil}</strong></li>
+                          <li>4. 1º Palpite: <strong className="text-[var(--text-primary)]">{new Date(entry.first_prediction_at).toLocaleDateString('pt-BR')}</strong></li>
+                        </ul>
+                      </PopoverContent>
+                    </Popover>
+                    <span className="text-lg font-black text-green-200">{entry.total_points}</span>
+                  </div>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">Palpites</span>

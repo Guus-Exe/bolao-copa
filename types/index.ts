@@ -35,4 +35,5 @@ export type RankingEntry = {
   exact_scores_brazil: number
   correct_predictions: number
   position: number
+  first_prediction_at: string
 }
