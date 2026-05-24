@@ -3,6 +3,7 @@ import Link from "next/link"
 import { getAdminGames, getAdminSummary, getAdminUsers } from "@/lib/queries/admin"
 import { StatCards } from "@/components/admin/StatCards"
 import { Button } from "@/components/ui/button"
+import { CountryFlag } from "@/components/ui/country-flag"
 
 export default async function AdminPage() {
   const [summaryResult, gamesResult, usersResult] = await Promise.all([
@@ -56,9 +57,10 @@ export default async function AdminPage() {
                   key={game.id}
                   className="flex items-center justify-between gap-4 rounded-md border border-sky-500/10 bg-slate-900/50 p-3"
                 >
-                  <span className="font-semibold text-white">
-                    {game.home_flag} {game.home_team} x {game.away_team}{" "}
-                    {game.away_flag}
+                  <span className="font-semibold text-white flex items-center gap-2">
+                    <CountryFlag flag={game.home_flag} name={game.home_team} className="h-4 w-6" />
+                    <span>{game.home_team} x {game.away_team}</span>
+                    <CountryFlag flag={game.away_flag} name={game.away_team} className="h-4 w-6" />
                   </span>
                   <span className="text-sm text-sky-200">
                     {new Intl.DateTimeFormat("pt-BR", {
