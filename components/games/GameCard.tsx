@@ -172,8 +172,12 @@ export function GameCard({
               className={cn(
                 "h-10 w-full border text-sm font-bold transition-all duration-300",
                 isAnimatingButton || isPending
-                  ? "bg-black border-[var(--green-500)] text-[var(--green-500)] shadow-[0_0_20px_var(--green-glow)]"
-                  : "bg-[var(--green-500)] border-[var(--green-500)] text-black shadow-[0_0_10px_var(--green-glow)] hover:bg-black hover:text-[var(--green-500)] hover:shadow-[0_0_20px_var(--green-glow)]"
+                  ? prediction
+                    ? "bg-black border-yellow-500/50 text-yellow-300 shadow-[0_0_15px_rgba(234,179,8,0.3)]"
+                    : "bg-black border-[var(--green-500)] text-[var(--green-500)] shadow-[0_0_20px_var(--green-glow)]"
+                  : prediction
+                    ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-200 shadow-[0_0_10px_rgba(234,179,8,0.15)] hover:bg-yellow-500/20 hover:border-yellow-500/50 hover:text-yellow-300 hover:shadow-[0_0_15px_rgba(234,179,8,0.25)]"
+                    : "bg-[var(--green-500)] border-[var(--green-500)] text-black shadow-[0_0_10px_var(--green-glow)] hover:bg-black hover:text-[var(--green-500)] hover:shadow-[0_0_20px_var(--green-glow)]"
               )}
             >
               {isPending ? "Salvando..." : submitLabel}
