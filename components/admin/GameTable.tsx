@@ -109,15 +109,15 @@ export function GameTable({ games }: GameTableProps) {
     if (!game.api_fixture_id) return
     setError(null)
     setToast("Sincronizando...")
-    
+
     const result = await syncGameScore(game.id)
-    
+
     if (!result.success) {
       setError(result.error)
       setToast(null)
       return
     }
-    
+
     showToast("Placar sincronizado e pontos calculados!")
   }
 
@@ -160,7 +160,7 @@ export function GameTable({ games }: GameTableProps) {
     setError(null)
     setDeletingAll(true)
     setToast("Excluindo todos os jogos...")
-    
+
     const result = await deleteAllGames()
 
     if (!result.success) {
@@ -171,7 +171,7 @@ export function GameTable({ games }: GameTableProps) {
       setIsDeleteAllOpen(false)
       setConfirmText("")
     }
-    
+
     setDeletingAll(false)
   }
 
@@ -472,8 +472,7 @@ export function GameTable({ games }: GameTableProps) {
               value={confirmText}
               onChange={(e) => setConfirmText(e.target.value)}
               placeholder="Digite Confirmar"
-              className="border-sky-500/30 bg-slate-900 text-white"
-            />
+              className="border-sky-500/30 bg-slate-900 text-white" />
           </div>
           <DialogFooter>
             <Button

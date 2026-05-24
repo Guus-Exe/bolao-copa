@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Trophy, MessageSquare, UserCircle } from "lucide-react";
+import { Trophy, MessageSquare, UserCircle, BookOpen } from "lucide-react";
 
 export function OnboardingModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +31,7 @@ export function OnboardingModal() {
   };
 
   const nextStep = () => {
-    if (step < 3) {
+    if (step < 4) {
       setStep(step + 1);
     } else {
       handleClose();
@@ -50,12 +50,14 @@ export function OnboardingModal() {
           <DialogTitle>
             {step === 1 && "Bem-vindo ao Bolão!"}
             {step === 2 && "Acompanhe o Ranking"}
-            {step === 3 && "Participe do Chat"}
+            {step === 3 && "Entenda as Regras"}
+            {step === 4 && "Participe do Chat"}
           </DialogTitle>
           <DialogDescription>
             {step === 1 && "Antes de começarmos, que tal dar uma cara para o seu perfil?"}
             {step === 2 && "Veja quem está na liderança e mostre suas habilidades."}
-            {step === 3 && "Converse com outros participantes em tempo real."}
+            {step === 3 && "Saiba exatamente como funciona o sistema de pontuação."}
+            {step === 4 && "Converse com outros participantes em tempo real."}
           </DialogDescription>
         </DialogHeader>
 
@@ -86,6 +88,17 @@ export function OnboardingModal() {
           {step === 3 && (
             <div className="space-y-4 animate-in fade-in zoom-in duration-300">
               <div className="flex justify-center">
+                <BookOpen className="w-16 h-16 text-[var(--green-500)]" />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Placar exato vale <strong>3 pontos</strong>! Se acertar só o vencedor, leva <strong>1 ponto</strong>.
+                Não deixe de ler a seção de <strong>Regras</strong> para ver também como funciona o desempate.
+              </p>
+            </div>
+          )}
+          {step === 4 && (
+            <div className="space-y-4 animate-in fade-in zoom-in duration-300">
+              <div className="flex justify-center">
                 <MessageSquare className="w-16 h-16 text-blue-500" />
               </div>
               <p className="text-sm text-muted-foreground">
@@ -100,6 +113,7 @@ export function OnboardingModal() {
             <div className={`w-2 h-2 rounded-full transition-colors ${step === 1 ? 'bg-primary' : 'bg-muted'}`} />
             <div className={`w-2 h-2 rounded-full transition-colors ${step === 2 ? 'bg-primary' : 'bg-muted'}`} />
             <div className={`w-2 h-2 rounded-full transition-colors ${step === 3 ? 'bg-primary' : 'bg-muted'}`} />
+            <div className={`w-2 h-2 rounded-full transition-colors ${step === 4 ? 'bg-primary' : 'bg-muted'}`} />
           </div>
           <div className="space-x-2">
             {step > 1 && (
@@ -108,7 +122,7 @@ export function OnboardingModal() {
               </Button>
             )}
             <Button onClick={nextStep}>
-              {step === 3 ? "Começar!" : "Próximo"}
+              {step === 4 ? "Começar!" : "Próximo"}
             </Button>
           </div>
         </div>
