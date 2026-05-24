@@ -1,4 +1,4 @@
-import { getAdminGames } from "@/app/actions/admin"
+import { getAdminGames } from "@/lib/queries/admin"
 import { GameTable } from "@/components/admin/GameTable"
 
 export default async function AdminGamesPage() {

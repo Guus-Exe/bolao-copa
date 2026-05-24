@@ -1,4 +1,4 @@
-import { getAdminSummary, getAdminUsers } from "@/app/actions/admin"
+import { getAdminSummary, getAdminUsers } from "@/lib/queries/admin"
 import { StatCards } from "@/components/admin/StatCards"
 import { UserTable } from "@/components/admin/UserTable"
 

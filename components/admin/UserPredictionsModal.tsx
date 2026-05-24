@@ -3,11 +3,8 @@
 import { X } from "lucide-react"
 import { useEffect, useMemo, useState } from "react"
 
-import {
-  getUserPredictionsForAdmin,
-  type AdminPrediction,
-  type AdminUser
-} from "@/app/actions/admin"
+import { getUserPredictionsForAdmin } from "@/app/actions/admin-users"
+import { type AdminPrediction, type AdminUser } from "@/lib/queries/admin"
 import { Button } from "@/components/ui/button"
 import {
   Table,

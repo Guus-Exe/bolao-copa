@@ -1,4 +1,4 @@
-import { getAdminUsers } from "@/app/actions/admin"
+import { getAdminUsers } from "@/lib/queries/admin"
 import { AccessControlTable } from "@/components/admin/AccessControlTable"
 
 export default async function AdminControlPage() {

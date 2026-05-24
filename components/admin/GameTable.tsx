@@ -4,7 +4,8 @@ import { CalendarPlus, Download, Edit3, FileText, ListChecks, Loader2, Trash2, R
 import { useRouter } from "next/navigation"
 import { useMemo, useRef, useState, type ReactNode } from "react"
 
-import { deleteAllGames, deleteGame, importWorldCupGames, importGamesFromUploadedPDF, syncGameScore } from "@/app/actions/admin"
+import { deleteAllGames, deleteGame, importWorldCupGames, importGamesFromUploadedPDF } from "@/app/actions/admin-games"
+import { syncGameScore } from "@/app/actions/admin-results"
 import { GameForm } from "@/components/admin/GameForm"
 import { ResultModal } from "@/components/admin/ResultModal"
 import { Button } from "@/components/ui/button"

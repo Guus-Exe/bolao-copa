@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-import { recalculateGamePoints } from "@/app/actions/admin"
+import { recalculateGamePoints } from "@/app/actions/admin-results"
 import { fetchFixtures, fetchFixturesByDate } from "@/lib/api-football"
 import { supabaseAdmin } from "@/lib/supabase/admin"
 

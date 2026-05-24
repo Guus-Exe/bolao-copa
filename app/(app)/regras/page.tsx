@@ -118,8 +118,8 @@ export default function RegrasPage() {
               <li className="flex items-start gap-4 rounded-lg bg-[var(--bg-elevated)] p-4">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--green-700)] text-white font-bold">4</div>
                 <div>
-                  <h4 className="font-semibold text-[var(--text-primary)]">Sorteio / Assiduidade</h4>
-                  <p className="text-sm text-[var(--text-muted)]">Como último critério, o maior número de palpites (assiduidade) e por fim, um sorteio ou ordem alfabética de inscrição.</p>
+                  <h4 className="font-semibold text-[var(--text-primary)]">Sorteio</h4>
+                  <p className="text-sm text-[var(--text-muted)]">Como último critério, será realizado um sorteio ou ordem alfabética de inscrição.</p>
                 </div>
               </li>
             </ul>

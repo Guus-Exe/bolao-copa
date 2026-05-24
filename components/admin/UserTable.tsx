@@ -7,9 +7,9 @@ import { useMemo, useState, type ReactNode } from "react"
 import {
   deleteUser,
   toggleUserAccess,
-  toggleUserAdmin,
-  type AdminUser
-} from "@/app/actions/admin"
+  toggleUserAdmin
+} from "@/app/actions/admin-users"
+import type { AdminUser } from "@/lib/queries/admin"
 import { UserPredictionsModal } from "@/components/admin/UserPredictionsModal"
 import { Button } from "@/components/ui/button"
 import {

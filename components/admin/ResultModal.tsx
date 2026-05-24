@@ -6,7 +6,7 @@ import { useEffect, useState, type ReactNode } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-import { clearResult, insertResult } from "@/app/actions/admin"
+import { clearResult, insertResult } from "@/app/actions/admin-results"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"

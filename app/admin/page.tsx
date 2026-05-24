@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { getAdminGames, getAdminSummary, getAdminUsers } from "@/app/actions/admin"
+import { getAdminGames, getAdminSummary, getAdminUsers } from "@/lib/queries/admin"
 import { StatCards } from "@/components/admin/StatCards"
 import { Button } from "@/components/ui/button"
 

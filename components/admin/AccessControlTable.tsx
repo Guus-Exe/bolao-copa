@@ -9,7 +9,8 @@ import {
   type ReactNode
 } from "react"
 
-import { toggleUserAccess, type AdminUser } from "@/app/actions/admin"
+import { toggleUserAccess } from "@/app/actions/admin-users"
+import type { AdminUser } from "@/lib/queries/admin"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {

@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { UsersRound } from "lucide-react"
-import { getUserPredictions } from "@/app/actions/predictions"
+import { getUserPredictions } from "@/lib/queries/predictions"
 import { GameDashboard } from "@/components/games/GameDashboard"
 import { createServerClient } from "@/lib/supabase/server"
 import type { Game, Prediction } from "@/types"

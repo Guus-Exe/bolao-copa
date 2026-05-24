@@ -50,7 +50,7 @@ export async function getRankingEntries(): Promise<{
         points_earned,
         predicted_home_score,
         predicted_away_score,
-        game:games(home_score, away_score, is_finished)
+        game:games(home_team, away_team, home_score, away_score, is_finished)
       `)
 
     if (prError || !predictions) throw prError || new Error("Erro ao obter palpites")
@@ -79,7 +79,13 @@ export async function getRankingEntries(): Promise<{
           correctPredictions++
         }
 
-        const game = (pred as any).game
+        const game = pred.game as {
+          home_team: string
+          away_team: string
+          home_score: number | null
+          away_score: number | null
+          is_finished: boolean
+        } | null
         if (
           game &&
           game.is_finished &&
@@ -116,7 +122,6 @@ export async function getRankingEntries(): Promise<{
       if (b.exact_scores !== a.exact_scores) return b.exact_scores - a.exact_scores
       if (b.exact_scores_hosts !== a.exact_scores_hosts) return b.exact_scores_hosts - a.exact_scores_hosts
       if (b.exact_scores_brazil !== a.exact_scores_brazil) return b.exact_scores_brazil - a.exact_scores_brazil
-      if (b.total_predictions !== a.total_predictions) return b.total_predictions - a.total_predictions
       return a.username.localeCompare(b.username)
     })
 
@@ -130,8 +135,7 @@ export async function getRankingEntries(): Promise<{
           prev.total_points === curr.total_points &&
           prev.exact_scores === curr.exact_scores &&
           prev.exact_scores_hosts === curr.exact_scores_hosts &&
-          prev.exact_scores_brazil === curr.exact_scores_brazil &&
-          prev.total_predictions === curr.total_predictions
+          prev.exact_scores_brazil === curr.exact_scores_brazil
 
         if (!isTie) {
           currentRank = i + 1
@@ -141,7 +145,7 @@ export async function getRankingEntries(): Promise<{
     }
 
     return { ranking: entries, error: null }
-  } catch (fallbackError: any) {
+  } catch (fallbackError: unknown) {
     console.error("Erro no fallback de calculo de ranking:", fallbackError)
     return { ranking: [], error: "Não foi possível carregar o ranking." }
   }

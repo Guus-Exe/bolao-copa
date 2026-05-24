@@ -1,6 +1,6 @@
 import { CalendarDays, Clock3, ShieldCheck, UsersRound } from "lucide-react"
 
-import type { AdminSummary } from "@/app/actions/admin"
+import type { AdminSummary } from "@/lib/queries/admin"
 
 type StatCardsProps = {
   summary: AdminSummary

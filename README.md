@@ -11,6 +11,7 @@ Plataforma web para bolão da Copa do Mundo. Usuários se cadastram, fazem palpi
 - [Funcionalidades](#funcionalidades)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Banco de Dados](#banco-de-dados)
+- [Segurança e RLS](#segurança-e-rls)
 - [Regras de Pontuação](#regras-de-pontuação)
 - [Configuração do Ambiente](#configuração-do-ambiente)
 - [Instalação](#instalação)
@@ -26,9 +27,9 @@ Plataforma web para bolão da Copa do Mundo. Usuários se cadastram, fazem palpi
 O Bolão da Copa é um SaaS simples e focado. O administrador cadastra os jogos e libera o acesso dos usuários manualmente. Usuários com acesso liberado podem fazer palpites, conversar no chat e acompanhar o ranking em tempo real.
 
 **Fluxo principal:**
-1. Usuário se cadastra via /signup
+1. Usuário se cadastra via `/signup`
 2. Admin libera o acesso no painel (`is_paid = true`)
-3. Usuário faz palpites antes dos jogos começarem
+3. Usuário faz palpites até 1h antes do início de cada jogo (validado server-side)
 4. Admin insere os resultados após cada jogo
 5. Pontos são calculados automaticamente
 6. Ranking atualiza em tempo real
@@ -39,7 +40,7 @@ O Bolão da Copa é um SaaS simples e focado. O administrador cadastra os jogos 
 
 | Camada | Tecnologia |
 |---|---|
-| Framework | Next.js 14 (App Router) |
+| Framework | Next.js 15 (App Router) |
 | Linguagem | TypeScript |
 | Estilização | Tailwind CSS + shadcn/ui |
 | Banco de dados | Supabase (PostgreSQL) |
@@ -78,51 +79,59 @@ bolao-da-copa/
 │   │   ├── login/page.tsx
 │   │   └── signup/page.tsx
 │   ├── (app)/
-│   │   ├── layout.tsx          # Layout protegido
-│   │   ├── dashboard/page.tsx  # Jogos + palpites
+│   │   ├── layout.tsx              # Layout protegido
+│   │   ├── dashboard/page.tsx      # Jogos + palpites
 │   │   ├── ranking/page.tsx
 │   │   ├── chat/page.tsx
 │   │   └── perfil/page.tsx
 │   ├── admin/
-│   │   ├── layout.tsx          # Verifica is_admin
+│   │   ├── layout.tsx              # Verifica is_admin
 │   │   ├── page.tsx
 │   │   ├── jogos/page.tsx
 │   │   └── usuarios/page.tsx
-│   ├── actions/                # Server Actions por domínio
+│   ├── actions/                    # Server Actions por domínio
 │   │   ├── auth.ts
 │   │   ├── predictions.ts
-│   │   ├── chat.ts
+│   │   ├── chat-messages.ts
 │   │   ├── profile.ts
 │   │   └── admin.ts
 │   ├── globals.css
 │   └── layout.tsx
 ├── components/
-│   ├── ui/                     # shadcn/ui (não editar manualmente)
-│   ├── layout/                 # Header, Sidebar, BottomNav
-│   ├── landing/                # Seções da landing page
-│   ├── games/                  # GameCard, PredictionInput
-│   ├── chat/                   # ChatRoom, MessageBubble
-│   ├── ranking/                # RankingTable, Podium
-│   ├── profile/                # AvatarUpload, UsernameForm
-│   └── admin/                  # GameForm, UserTable, ResultModal
+│   ├── ui/                         # shadcn/ui (não editar manualmente)
+│   ├── layout/                     # Header, Sidebar, BottomNav
+│   ├── landing/                    # Seções da landing page
+│   ├── games/                      # GameCard, PredictionInput
+│   ├── chat/                       # ChatRoom, MessageBubble
+│   ├── ranking/                    # RankingTable, Podium
+│   ├── profile/                    # AvatarUpload, UsernameForm
+│   └── admin/                      # GameForm, UserTable, ResultModal
 ├── lib/
 │   ├── supabase/
-│   │   ├── client.ts           # Browser client
-│   │   ├── server.ts           # Server client
-│   │   └── admin.ts            # Service role (server-only)
-│   ├── validations.ts          # Schemas Zod
-│   ├── scoring.ts              # Lógica de pontuação
-│   ├── utils.ts                # cn(), formatDate()
-│   └── constants.ts            # SCORING_RULES, STAGES
+│   │   ├── client.ts               # Browser client
+│   │   ├── server.ts               # Server client
+│   │   └── admin.ts                # Service role (server-only)
+│   ├── queries/                    # Queries Supabase por domínio
+│   │   ├── games.ts
+│   │   ├── predictions.ts
+│   │   ├── chat-messages.ts
+│   │   ├── ranking.ts
+│   │   └── profiles.ts
+│   ├── validations.ts              # Schemas Zod
+│   ├── scoring.ts                  # Lógica de pontuação
+│   ├── utils.ts                    # cn(), formatDate()
+│   └── constants.ts                # SCORING_RULES, STAGES
 ├── hooks/
 │   ├── useSession.ts
 │   ├── useProfile.ts
 │   └── useRealtimeChat.ts
 ├── types/
-│   ├── database.ts             # Gerado pelo Supabase CLI
-│   └── index.ts                # Tipos de domínio
-├── middleware.ts               # Proteção de rotas
-├── .env.local                  # Variáveis privadas (não commitar)
+│   ├── database.ts                 # Gerado pelo Supabase CLI
+│   └── index.ts                    # Tipos de domínio
+├── supabase/
+│   └── migrations/                 # Migrações SQL versionadas
+├── middleware.ts                   # Proteção de rotas
+├── .env.local                      # Variáveis privadas (não commitar)
 └── .env.example
 ```
 
@@ -135,7 +144,7 @@ bolao-da-copa/
 #### `profiles`
 | Coluna | Tipo | Descrição |
 |---|---|---|
-| id | uuid | FK para auth.users |
+| id | uuid | FK para `auth.users` |
 | username | text | Apelido público único |
 | avatar_url | text | URL da foto de perfil |
 | full_name | text | Nome completo |
@@ -151,7 +160,7 @@ bolao-da-copa/
 | home_team / away_team | text | Nome dos times |
 | home_flag / away_flag | text | Emoji da bandeira |
 | match_date | timestamptz | Data e hora do jogo |
-| stage | text | grupo / oitavas / quartas / semi / final |
+| stage | text | `grupo` / `oitavas` / `quartas` / `semi` / `final` |
 | group_name | text | Grupo (A–H), nullable |
 | home_score / away_score | int | Resultado, preenchido pelo admin |
 | is_finished | boolean | Jogo encerrado |
@@ -160,17 +169,19 @@ bolao-da-copa/
 | Coluna | Tipo | Descrição |
 |---|---|---|
 | id | uuid | — |
-| user_id | uuid | FK profiles |
-| game_id | uuid | FK games |
+| user_id | uuid | FK `profiles` |
+| game_id | uuid | FK `games` |
 | predicted_home_score | int | Palpite do placar |
 | predicted_away_score | int | Palpite do placar |
 | points_earned | int | Calculado após resultado |
+
+> ⚠️ O prazo de palpite (1h antes do jogo) é validado **server-side** na Server Action `predictions.ts` via `match_date - interval '1 hour'`. O client apenas oculta o input; confiar só no client seria uma vulnerabilidade.
 
 #### `chat_messages`
 | Coluna | Tipo | Descrição |
 |---|---|---|
 | id | uuid | — |
-| user_id | uuid | FK profiles |
+| user_id | uuid | FK `profiles` |
 | content | text | Conteúdo da mensagem |
 | created_at | timestamptz | — |
 
@@ -179,6 +190,24 @@ bolao-da-copa/
 ```bash
 npx supabase gen types typescript --project-id SEU_PROJECT_ID > types/database.ts
 ```
+
+---
+
+## Segurança e RLS
+
+Todas as tabelas têm Row Level Security (RLS) ativado. As políticas seguem o princípio de menor privilégio:
+
+| Tabela | Leitura | Escrita |
+|---|---|---|
+| `profiles` | Próprio perfil | Próprio perfil |
+| `games` | Qualquer autenticado com `is_paid` | Apenas `is_admin` |
+| `predictions` | Apenas o dono (`user_id = auth.uid()`) | Apenas o dono |
+| `chat_messages` | Qualquer autenticado com `is_paid` | Qualquer autenticado com `is_paid` |
+
+**Regras gerais de segurança:**
+- `SUPABASE_SERVICE_ROLE_KEY` nunca é exposta ao client — somente em `lib/supabase/admin.ts` (server-only)
+- `user_id` nunca é lido do body da requisição — sempre de `auth.getUser()` na Server Action
+- Inputs são sempre validados com Zod antes de qualquer operação no banco
 
 ---
 
@@ -203,9 +232,10 @@ Crie o arquivo `.env.local` na raiz do projeto:
 NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...          # chave pública (pode ir ao client)
 SUPABASE_SERVICE_ROLE_KEY=eyJ...              # chave privada (apenas server-side)
-```
 
-> ⚠️ Nunca commite o `.env.local`. Ele já está no `.gitignore`.
+
+
+> ⚠️ Nunca commite o `.env.local`. Ele já está no `.gitignore`.  
 > O arquivo `.env.example` contém o template sem valores reais — commite ele.
 
 ---
@@ -218,6 +248,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJ...              # chave privada (apenas server-sid
 - npm ou pnpm
 - Conta no [Supabase](https://supabase.com)
 - Conta na [Vercel](https://vercel.com) (para deploy)
+- [Supabase CLI](https://supabase.com/docs/guides/cli) (recomendado para migrações)
 
 ### Passo a passo
 
@@ -233,9 +264,11 @@ npm install
 cp .env.example .env.local
 # Edite .env.local com suas chaves do Supabase
 
-# 4. Execute o schema SQL no Supabase
-# Acesse: supabase.com > seu projeto > SQL Editor
-# Cole e execute o conteúdo de: database/schema.sql
+# 4. Execute as migrações no banco
+npx supabase db push
+
+# Alternativa (sem CLI): acesse supabase.com > seu projeto > SQL Editor
+# e execute manualmente os arquivos em supabase/migrations/
 
 # 5. Inicie o servidor de desenvolvimento
 npm run dev
@@ -259,12 +292,13 @@ npm run lint     # verificar erros de lint
 Após criar sua conta via `/signup`, execute no **SQL Editor do Supabase**:
 
 ```sql
+-- Encontrar seu user_id
+SELECT id, email FROM auth.users WHERE email = 'seu@email.com';
+
+-- Promover a admin
 UPDATE profiles
 SET is_admin = true, is_paid = true
 WHERE id = 'SEU_USER_ID';
-
--- Para encontrar seu user_id:
-SELECT id, email FROM auth.users WHERE email = 'seu@email.com';
 ```
 
 ---
@@ -285,31 +319,28 @@ SELECT id, email FROM auth.users WHERE email = 'seu@email.com';
 
 ## Roadmap de Desenvolvimento
 
-Ordem recomendada de construção:
-
-- [ ] **Parte 1** — Setup, banco de dados e autenticação
-- [ ] **Parte 2** — Landing page
-- [ ] **Parte 3** — Jogos e sistema de palpites
-- [ ] **Parte 4** — Chat em tempo real
-- [ ] **Parte 5** — Ranking de usuários
-- [ ] **Parte 6** — Perfil do usuário
-- [ ] **Parte 7** — Painel administrativo
+| Etapa | Descrição | Status |
+|---|---|---|
+| Parte 1 | Setup, banco de dados e autenticação | ⬜ |
+| Parte 2 | Landing page | ⬜ |
+| Parte 3 | Jogos e sistema de palpites | ⬜ |
+| Parte 4 | Chat em tempo real | ⬜ |
+| Parte 5 | Ranking de usuários | ⬜ |
+| Parte 6 | Perfil do usuário | ⬜ |
+| Parte 7 | Painel administrativo | ⬜ |
 
 ---
 
 ## Skills do Projeto
 
-Este projeto utiliza 3 skills de desenvolvimento para manter consistência:
-
-| Skill | Descrição |
+| Skill | Quando usar |
 |---|---|
-| `bolao-ui-design` | Design system, paleta de cores, componentes visuais e padrões por página |
-| `bolao-security` | RLS, middleware, validação com Zod, upload seguro e boas práticas |
-| `bolao-architecture` | Estrutura de pastas, Client vs Server, convenções e fluxo de features |
+| `bolao-architecture` | Dúvidas sobre estrutura de pastas, Server vs Client Components, fluxo de uma nova feature |
+| `bolao-security` | Implementar RLS, middleware, validação com Zod, upload de arquivo, autenticação |
+| `bolao-ui-design` | Criar ou ajustar páginas, componentes visuais, responsividade, design system |
 
 ---
 
 ## Licença
 
 Projeto privado — todos os direitos reservados.
-"# bolao-copa" 

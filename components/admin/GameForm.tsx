@@ -6,7 +6,7 @@ import { useEffect, useState, type ReactNode } from "react"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
 
-import { createGame, updateGame } from "@/app/actions/admin"
+import { createGame, updateGame } from "@/app/actions/admin-games"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
