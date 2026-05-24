@@ -965,11 +965,11 @@ export async function importGamesFromUploadedPDF(
     }
 
     const existingKeys = new Set(
-      (existingGames ?? []).map((g) => `${g.home_team}|${g.away_team}|${g.match_date}`)
+      (existingGames ?? []).map((g) => `${g.home_team}|${g.away_team}|${new Date(g.match_date).getTime()}`)
     )
 
     const newGames = games.filter(
-      (g) => !existingKeys.has(`${g.home_team}|${g.away_team}|${g.match_date}`)
+      (g) => !existingKeys.has(`${g.home_team}|${g.away_team}|${new Date(g.match_date).getTime()}`)
     )
 
     const total   = games.length
