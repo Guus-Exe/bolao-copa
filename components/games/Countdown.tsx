@@ -16,7 +16,7 @@ export function Countdown({ deadline }: { deadline: Date }) {
 
   useEffect(() => {
     setMounted(true)
-    
+
     const calculateTimeLeft = () => {
       const difference = deadline.getTime() - new Date().getTime()
 
@@ -50,7 +50,7 @@ export function Countdown({ deadline }: { deadline: Date }) {
     return (
       <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-yellow-500/90">
         <Clock className="size-3.5" />
-        Encerrado
+        Em andamento
       </div>
     )
   }

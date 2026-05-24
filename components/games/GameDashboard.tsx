@@ -175,7 +175,7 @@ export function GameDashboard({ games, predictions }: GameDashboardProps) {
       {toast ? (
         <div
           className={cn(
-            "fixed bottom-5 right-5 z-50 rounded-lg border px-4 py-3 text-sm font-semibold shadow-lg",
+            "fixed left-1/2 top-5 z-[100] w-[90%] max-w-sm -translate-x-1/2 rounded-lg border px-4 py-3 text-center text-sm font-semibold shadow-lg",
             toast.type === "success"
               ? "border-green-500/30 bg-green-500/15 text-green-200"
               : "border-red-500/30 bg-red-500/15 text-red-200"
