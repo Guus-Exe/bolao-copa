@@ -1,6 +1,7 @@
 import type { RankingEntry } from "@/types"
 import { RankingAvatar } from "@/components/ranking/RankingAvatar"
 import { cn } from "@/lib/utils"
+import { TiebreakerInfo } from "@/components/ranking/TiebreakerInfo"
 
 type PodiumProps = {
   entries: RankingEntry[]
@@ -89,15 +90,20 @@ export function Podium({ entries }: PodiumProps) {
             <h2 className="mt-3 truncate text-lg font-bold text-[var(--text-primary)]">
               {entry.username}
             </h2>
-            <p
-              className={cn(
-                "mt-2 text-3xl font-black",
-                config.pointsClassName
-              )}
-            >
-              {entry.total_points}
-            </p>
-            <p className="text-sm text-[var(--text-secondary)]">pontos</p>
+            <div className="mt-2 flex flex-col items-center">
+              <div className="flex items-center justify-center gap-1.5">
+                <p
+                  className={cn(
+                    "text-3xl font-black",
+                    config.pointsClassName
+                  )}
+                >
+                  {entry.total_points}
+                </p>
+                <TiebreakerInfo entry={entry} />
+              </div>
+              <p className="text-sm text-[var(--text-secondary)] mt-0.5">pontos</p>
+            </div>
             <p className="mt-2 text-xs text-[var(--text-secondary)]">
               {entry.exact_scores} exatos
             </p>
