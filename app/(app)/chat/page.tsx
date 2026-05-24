@@ -41,27 +41,6 @@ export default async function ChatPage() {
     ((profilesData ?? []) as ProfileRow[]).map((item) => [item.id, item])
   )
 
-  const messageIds = messages.map((m) => m.id)
-  const { data: reactionsData } = messageIds.length
-    ? await supabase
-        .from("chat_reactions")
-        .select("id, message_id, user_id, emoji")
-        .in("message_id", messageIds)
-    : { data: [] }
-
-  const reactionsByMessage = new Map<string, NonNullable<ChatMessageWithProfile["reactions"]>>()
-  for (const row of (reactionsData ?? []) as ReactionRow[]) {
-    if (!reactionsByMessage.has(row.message_id)) {
-      reactionsByMessage.set(row.message_id, {})
-    }
-    const msgReactions = reactionsByMessage.get(row.message_id)!
-    if (!msgReactions[row.emoji]) {
-      msgReactions[row.emoji] = { count: 0, user_ids: [] }
-    }
-    msgReactions[row.emoji].count++
-    msgReactions[row.emoji].user_ids.push(row.user_id)
-  }
-
   const initialMessages = messages.map((message) => {
     const messageProfile = profilesById.get(message.user_id)
 
@@ -75,8 +54,7 @@ export default async function ChatPage() {
             username: messageProfile.username,
             avatar_url: messageProfile.avatar_url
           }
-        : null,
-      reactions: reactionsByMessage.get(message.id) ?? {}
+        : null
     }
   })
 
@@ -104,11 +82,4 @@ type ProfileRow = {
   id: string
   username: string
   avatar_url: string | null
-}
-
-type ReactionRow = {
-  id: string
-  message_id: string
-  user_id: string
-  emoji: string
 }

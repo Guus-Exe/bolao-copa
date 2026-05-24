@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { adminResultSchema } from "@/lib/validations"
+import { CountryFlag } from "@/components/ui/country-flag"
 import type { Game } from "@/types"
 
 type ResultFormValues = z.infer<typeof adminResultSchema>
@@ -80,8 +81,10 @@ export function ResultModal({ game, onClose, onSaved }: ResultModalProps) {
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-sky-300">
               Inserir resultado
             </p>
-            <h2 className="mt-1 text-xl font-bold">
-              {game.home_flag} {game.home_team} x {game.away_team} {game.away_flag}
+            <h2 className="mt-1 text-xl font-bold flex items-center gap-2 flex-wrap">
+              <CountryFlag flag={game.home_flag} name={game.home_team} className="h-5 w-7" />
+              <span>{game.home_team} x {game.away_team}</span>
+              <CountryFlag flag={game.away_flag} name={game.away_team} className="h-5 w-7" />
             </h2>
           </div>
           <Button type="button" size="icon" variant="ghost" onClick={onClose}>

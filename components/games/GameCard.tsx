@@ -6,6 +6,7 @@ import { savePrediction } from "@/app/actions/predictions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Countdown } from "@/components/games/Countdown"
+import { CountryFlag } from "@/components/ui/country-flag"
 import { calculatePoints } from "@/lib/scoring"
 import { cn, formatDate, formatScore } from "@/lib/utils"
 import type { Game, Prediction } from "@/types"
@@ -229,12 +230,12 @@ function TeamBlock({
   return (
     <div
       className={cn(
-        "min-w-0",
-        align === "right" ? "text-right" : "text-left"
+        "min-w-0 flex flex-col justify-center",
+        align === "right" ? "items-end text-right" : "items-start text-left"
       )}
     >
-      <div className="text-3xl leading-none">{flag}</div>
-      <p className="mt-2 truncate font-semibold">{name}</p>
+      <CountryFlag flag={flag} name={name} className="h-7 w-10 text-3xl" />
+      <p className="mt-2 truncate font-semibold w-full">{name}</p>
     </div>
   )
 }

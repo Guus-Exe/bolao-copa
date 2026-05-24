@@ -17,6 +17,7 @@ export type ChatMessageWithProfile = {
     username: string
     avatar_url: string | null
   } | null
+  reactions?: any
 }
 
 export type GameWithPrediction = Game & {

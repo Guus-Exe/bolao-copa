@@ -15,6 +15,7 @@ import {
   TableRow
 } from "@/components/ui/table"
 import { formatScore } from "@/lib/utils"
+import { CountryFlag } from "@/components/ui/country-flag"
 
 type UserPredictionsModalProps = {
   user: AdminUser | null
@@ -98,9 +99,15 @@ export function UserPredictionsModal({
                 {predictions.map((prediction) => (
                   <TableRow key={prediction.id}>
                     <TableCell className="font-semibold text-white">
-                      {prediction.game
-                        ? `${prediction.game.home_flag} ${prediction.game.home_team} x ${prediction.game.away_team} ${prediction.game.away_flag}`
-                        : "Jogo removido"}
+                      {prediction.game ? (
+                        <div className="flex items-center gap-2">
+                          <CountryFlag flag={prediction.game.home_flag} name={prediction.game.home_team} className="h-4 w-6" />
+                          <span>{prediction.game.home_team} x {prediction.game.away_team}</span>
+                          <CountryFlag flag={prediction.game.away_flag} name={prediction.game.away_team} className="h-4 w-6" />
+                        </div>
+                      ) : (
+                        "Jogo removido"
+                      )}
                     </TableCell>
                     <TableCell className="text-sky-100">
                       {prediction.predicted_home_score} x{" "}

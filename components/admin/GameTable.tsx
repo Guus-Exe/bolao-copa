@@ -8,6 +8,7 @@ import { deleteAllGames, deleteGame, importWorldCupGames, importGamesFromUploade
 import { syncGameScore } from "@/app/actions/admin-results"
 import { GameForm } from "@/components/admin/GameForm"
 import { ResultModal } from "@/components/admin/ResultModal"
+import { CountryFlag } from "@/components/ui/country-flag"
 import { Button } from "@/components/ui/button"
 import {
   Table,
@@ -307,11 +308,17 @@ export function GameTable({ games }: GameTableProps) {
             {orderedGames.map((game) => (
               <TableRow key={game.id}>
                 <TableCell className="font-semibold text-white">
-                  {game.home_flag} {game.home_team}
+                  <span className="flex items-center gap-2">
+                    <CountryFlag flag={game.home_flag} name={game.home_team} className="h-4 w-6" />
+                    {game.home_team}
+                  </span>
                 </TableCell>
                 <TableCell className="text-center text-sky-200">x</TableCell>
                 <TableCell className="font-semibold text-white">
-                  {game.away_team} {game.away_flag}
+                  <span className="flex items-center gap-2">
+                    <CountryFlag flag={game.away_flag} name={game.away_team} className="h-4 w-6" />
+                    {game.away_team}
+                  </span>
                 </TableCell>
                 <TableCell className="text-sky-100">
                   {formatDate(game.match_date)}
@@ -412,7 +419,7 @@ export function GameTable({ games }: GameTableProps) {
               </div>
               <div className="flex w-full items-center justify-between px-2">
                 <div className="flex w-1/3 flex-col items-center gap-1 text-center font-semibold text-white">
-                  <span className="text-xl">{game.home_flag}</span>
+                  <CountryFlag flag={game.home_flag} name={game.home_team} className="h-6 w-8" />
                   <span className="truncate w-full">{game.home_team}</span>
                 </div>
                 <div className="flex w-1/3 flex-col items-center justify-center font-bold text-sky-100">
@@ -420,7 +427,7 @@ export function GameTable({ games }: GameTableProps) {
                   <span className="text-xs text-sky-500">X</span>
                 </div>
                 <div className="flex w-1/3 flex-col items-center gap-1 text-center font-semibold text-white">
-                  <span className="text-xl">{game.away_flag}</span>
+                  <CountryFlag flag={game.away_flag} name={game.away_team} className="h-6 w-8" />
                   <span className="truncate w-full">{game.away_team}</span>
                 </div>
               </div>

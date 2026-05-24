@@ -8,6 +8,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "**.supabase.co",
         pathname: "/storage/v1/object/public/**"
+      },
+      {
+        protocol: "https",
+        hostname: "flagcdn.com",
+        pathname: "/**"
       }
     ]
   },
@@ -47,8 +52,8 @@ const nextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              // Imagens: proprias, data URIs, blobs e Supabase Storage
-              "img-src 'self' data: blob: https://*.supabase.co",
+              // Imagens: proprias, data URIs, blobs, Supabase Storage e flagcdn.com
+              "img-src 'self' data: blob: https://*.supabase.co https://flagcdn.com",
               // Scripts: Next.js requer unsafe-inline/eval para RSC no v14
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               // Estilos: proprios, inline (Tailwind) e Google Fonts
