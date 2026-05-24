@@ -120,7 +120,6 @@ export function ChatRoom({
               key={message.id}
               message={message}
               isOwnMessage={message.user_id === currentUserId}
-              currentUserId={currentUserId}
             />
           ))
         ) : (
