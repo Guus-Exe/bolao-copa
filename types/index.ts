@@ -7,6 +7,7 @@ export type Profile = Tables<"profiles">
 export type Game = Tables<"games">
 export type Prediction = Tables<"predictions">
 export type ChatMessage = Tables<"chat_messages">
+export type ChatReaction = Tables<"chat_reactions">
 
 export type ChatMessageWithProfile = {
   id: string
@@ -17,6 +18,12 @@ export type ChatMessageWithProfile = {
     username: string
     avatar_url: string | null
   } | null
+  reactions?: {
+    [emoji: string]: {
+      count: number
+      user_ids: string[]
+    }
+  }
 }
 
 export type GameWithPrediction = Game & {

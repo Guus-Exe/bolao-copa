@@ -88,8 +88,8 @@ export function ChatRoom({
   }
 
   return (
-    <section className="overflow-hidden rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface)]">
-      <header className="flex items-center justify-between gap-4 border-b border-[var(--border-strong)] px-4 py-3">
+    <section className="flex flex-col h-[calc(100vh-14rem)] md:h-[calc(100vh-11rem)] overflow-hidden rounded-2xl border border-green-500/20 bg-zinc-950/80 shadow-2xl backdrop-blur-md">
+      <header className="flex items-center justify-between gap-4 border-b border-green-500/10 bg-black/40 px-4 py-4">
         <div>
           <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-wide">
             Chat do Bolão
@@ -98,7 +98,7 @@ export function ChatRoom({
             Converse com os participantes liberados.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-[var(--border-strong)] px-3 py-1 text-xs font-semibold text-[var(--text-secondary)]">
+        <div className="flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1.5 text-xs font-semibold text-green-400">
           <span
             className={cn(
               "h-2 w-2 rounded-full",
@@ -111,7 +111,7 @@ export function ChatRoom({
 
       <div
         ref={listRef}
-        className="flex h-[62vh] flex-col gap-3 overflow-y-auto px-3 py-4 md:h-[65vh] md:px-4"
+        className="flex-1 flex flex-col gap-4 overflow-y-auto px-3 py-4 md:px-5 scroll-smooth"
         onScroll={handleScroll}
       >
         {messages.length > 0 ? (
@@ -120,6 +120,7 @@ export function ChatRoom({
               key={message.id}
               message={message}
               isOwnMessage={message.user_id === currentUserId}
+              currentUserId={currentUserId}
             />
           ))
         ) : (

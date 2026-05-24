@@ -11,6 +11,8 @@ type ActionResult<T = void> =
   | { success: false; error: string; data?: never }
 
 const userIdSchema = z.string().uuid()
+const messageIdSchema = z.string().uuid()
+const emojiSchema = z.string().min(1).max(10) // Em caso de emojis compostos
 
 export async function sendMessage(
   content: unknown
@@ -120,4 +122,72 @@ export async function getChatProfile(
 function sanitizeMessage(content: string) {
   // Remove tags HTML antes de salvar para manter o chat apenas com texto.
   return content.replace(/<[^>]*>/g, "").trim()
+}
+
+export async function toggleReaction(
+  messageId: unknown,
+  emoji: unknown
+): Promise<ActionResult> {
+  const parsedMessageId = messageIdSchema.safeParse(messageId)
+  const parsedEmoji = emojiSchema.safeParse(emoji)
+
+  if (!parsedMessageId.success || !parsedEmoji.success) {
+    return { success: false, error: "Dados inválidos para reação." }
+  }
+
+  const supabase = createServerClient()
+  const {
+    data: { user }
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { success: false, error: "Você precisa estar logado." }
+  }
+
+  const { data: profileData } = await supabase
+    .from("profiles")
+    .select("is_paid")
+    .eq("id", user.id)
+    .single()
+  const profile = profileData as { is_paid: boolean } | null
+
+  if (!profile?.is_paid) {
+    return { success: false, error: "Seu acesso ainda não foi liberado." }
+  }
+
+  // Remove todas as reações atuais do usuário nesta mensagem
+  const { data: deletedReactions, error: deleteError } = await supabaseAdmin
+    .from("chat_reactions")
+    .delete()
+    .eq("message_id", parsedMessageId.data)
+    .eq("user_id", user.id)
+    .select("emoji")
+
+  if (deleteError) {
+    return { success: false, error: "Não foi possível atualizar a reação." }
+  }
+
+  // Se o usuário já tinha apenas essa mesma reação (e mais nenhuma), não inserimos de novo (toggle off)
+  if (
+    deletedReactions &&
+    deletedReactions.length === 1 &&
+    deletedReactions[0].emoji === parsedEmoji.data
+  ) {
+    return { success: true, data: undefined }
+  }
+
+  // Insere a nova reação (substituindo todas as antigas, se havia)
+  const { error: insertError } = await supabaseAdmin
+    .from("chat_reactions")
+    .insert({
+      message_id: parsedMessageId.data,
+      user_id: user.id,
+      emoji: parsedEmoji.data
+    })
+
+  if (insertError) {
+    return { success: false, error: "Não foi possível adicionar a reação." }
+  }
+
+  return { success: true, data: undefined }
 }
