@@ -217,9 +217,6 @@ function Modal({
           <h3 className="font-[family-name:var(--font-display)] text-3xl tracking-wide">
             {title}
           </h3>
-          <Button type="button" variant="outline" size="sm" onClick={onClose}>
-            Fechar
-          </Button>
         </div>
         {children}
       </div>

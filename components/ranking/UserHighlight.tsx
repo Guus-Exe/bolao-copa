@@ -12,7 +12,7 @@ export function UserHighlight({ entry }: UserHighlightProps) {
   }
 
   return (
-    <aside className="sticky bottom-4 z-20 rounded-lg border border-green-500/30 bg-green-500/10 p-4 shadow-xl shadow-black/20 backdrop-blur">
+    <aside className="sticky bottom-20 z-20 rounded-lg border border-green-500/30 bg-green-500/10 p-4 shadow-xl shadow-black/20 backdrop-blur md:bottom-4">
       {/* Resumo sempre visivel para o usuario se localizar na classificacao. */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">

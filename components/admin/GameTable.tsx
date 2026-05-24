@@ -257,16 +257,12 @@ export function GameTable({ games }: GameTableProps) {
 
           <Button
             type="button"
-            onClick={handleImport}
-            disabled={importing}
-            className="gap-2 border border-emerald-500/30 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/25"
+            disabled={true}
+            className="gap-2 border border-slate-500/30 bg-slate-500/15 text-slate-400 opacity-50 cursor-not-allowed hover:bg-slate-500/15"
+            title="Importação via API desativada temporariamente"
           >
-            {importing ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <Download size={16} />
-            )}
-            {importing ? "Importando..." : "Importar da API"}
+            <Download size={16} />
+            Importar da API
           </Button>
           <Button
             type="button"
