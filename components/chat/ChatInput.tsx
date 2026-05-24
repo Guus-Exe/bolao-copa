@@ -9,7 +9,6 @@ import {
 } from "react"
 
 import { Button } from "@/components/ui/button"
-import { EmojiPicker } from "@/components/chat/EmojiPicker"
 
 type ChatInputProps = {
   value: string
@@ -64,33 +63,14 @@ export function ChatInput({
   return (
     <form
       onSubmit={handleSubmit}
-      className="border-t border-green-500/10 bg-black/40 p-4"
+      className="flex w-full justify-center border-t border-green-500/10 bg-black/40 p-4 sm:p-6"
     >
-      <div className="flex items-end gap-2">
-        <EmojiPicker 
-          disabled={!canSend} 
-          onEmojiSelect={(emoji) => {
-            const textarea = textareaRef.current
-            if (textarea) {
-              const start = textarea.selectionStart
-              const end = textarea.selectionEnd
-              const newValue = value.substring(0, start) + emoji + value.substring(end)
-              onChange(newValue)
-              // Timeout needed to allow React to update the state before setting selection
-              setTimeout(() => {
-                textarea.focus()
-                textarea.setSelectionRange(start + emoji.length, start + emoji.length)
-              }, 10)
-            } else {
-              onChange(value + emoji)
-            }
-          }} 
-        />
-        <div className="min-w-0 flex-1">
+      <div className="flex w-full max-w-4xl items-end gap-3 rounded-2xl border border-green-500/20 bg-zinc-900/60 p-2 shadow-inner transition-all focus-within:border-green-500/50 focus-within:bg-zinc-900/90">
+        <div className="relative min-w-0 flex-1">
           <textarea
             ref={textareaRef}
             aria-label="Digite sua mensagem"
-            className="max-h-28 min-h-12 w-full resize-none rounded-xl border border-green-500/20 bg-zinc-900/80 px-4 py-3 text-sm text-[var(--text-primary)] outline-none transition focus:border-green-400 focus:bg-zinc-900 focus:ring-1 focus:ring-green-400 disabled:cursor-not-allowed disabled:opacity-60"
+            className="block max-h-28 min-h-[44px] w-full resize-none bg-transparent px-4 py-3 text-sm text-[var(--text-primary)] placeholder:text-zinc-500 outline-none disabled:cursor-not-allowed disabled:opacity-60"
             disabled={!canSend}
             maxLength={MAX_LENGTH}
             placeholder={
@@ -104,20 +84,20 @@ export function ChatInput({
             onChange={(event) => onChange(event.target.value)}
             onKeyDown={handleKeyDown}
           />
-          <div className="mt-1 text-right text-xs text-[var(--text-muted)]">
+          <div className="absolute bottom-1 right-2 text-[10px] text-zinc-500 pointer-events-none">
             {value.length}/{MAX_LENGTH}
           </div>
         </div>
         <Button
           type="submit"
           size="icon"
-          className="h-12 w-12 shrink-0 rounded-full bg-green-600 text-white shadow-lg transition-all hover:bg-green-500 hover:scale-105 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
+          className="mb-1 mr-1 h-10 w-10 shrink-0 rounded-xl bg-green-600 text-white shadow-md transition-all hover:scale-105 hover:bg-green-500 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
           disabled={
             isSubmitDisabled || trimmedLength === 0 || value.length > MAX_LENGTH
           }
           aria-label="Enviar mensagem"
         >
-          <Send size={20} />
+          <Send size={18} />
         </Button>
       </div>
     </form>

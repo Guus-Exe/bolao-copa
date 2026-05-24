@@ -18,6 +18,7 @@ import { createServerClient } from "@/lib/supabase/server"
 import { cn } from "@/lib/utils"
 
 import { OnboardingModal } from "@/components/onboarding/OnboardingModal"
+import { PageTitle } from "@/components/layout/PageTitle"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,9 +66,7 @@ export default async function AppLayout({
       <header className="sticky top-0 z-50 border-b border-[var(--border-strong)] bg-[var(--bg-surface)]">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <span className="block font-[family-name:var(--font-display)] text-2xl tracking-wide md:text-3xl">
-              Bolão da Copa
-            </span>
+            <PageTitle />
           </div>
 
           <div className="flex items-center gap-3">

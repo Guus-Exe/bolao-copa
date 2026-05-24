@@ -88,26 +88,25 @@ export function ChatRoom({
   }
 
   return (
-    <section className="flex flex-col h-[calc(100vh-14rem)] md:h-[calc(100vh-11rem)] overflow-hidden rounded-2xl border border-green-500/20 bg-zinc-950/80 shadow-2xl backdrop-blur-md">
-      <header className="flex items-center justify-between gap-4 border-b border-green-500/10 bg-black/40 px-4 py-4">
-        <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-wide">
-            Chat do Bolão
-          </h1>
-          <p className="text-sm text-[var(--text-secondary)]">
-            Converse com os participantes liberados.
+    <section className="relative flex flex-col h-[calc(100dvh-132px)] md:h-[calc(100dvh-146px)] -mt-8 -mx-4 -mb-24 md:-mb-8 overflow-hidden border-t border-green-500/20 bg-black/20">
+      {!canSend && (
+        <div className="bg-yellow-500/10 border-b border-yellow-500/20 px-4 py-2 text-center">
+          <p className="text-sm text-yellow-500/90">
+            Você está aguardando liberação de acesso.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-green-500/20 bg-green-500/10 px-3 py-1.5 text-xs font-semibold text-green-400">
-          <span
-            className={cn(
-              "h-2 w-2 rounded-full",
-              isConnected ? "bg-green-400" : "bg-zinc-500"
-            )}
-          />
-          {isConnected ? "online" : "conectando"}
-        </div>
-      </header>
+      )}
+
+      {/* Indicador de status (flutuante) */}
+      <div className="absolute top-2 right-4 z-10 flex items-center gap-2 rounded-full border border-green-500/20 bg-black/60 px-2 py-1 text-[10px] font-semibold text-green-400 backdrop-blur-md">
+        <span
+          className={cn(
+            "h-1.5 w-1.5 rounded-full",
+            isConnected ? "bg-green-400" : "bg-zinc-500"
+          )}
+        />
+        {isConnected ? "online" : "conectando"}
+      </div>
 
       <div
         ref={listRef}
