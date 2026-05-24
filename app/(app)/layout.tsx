@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import {
+  BookOpen,
   CalendarDays,
   LockKeyhole,
   MessageCircle,
@@ -63,6 +64,7 @@ export default async function AppLayout({
             <nav className="flex flex-wrap gap-2">
               <NavItem href="/dashboard" icon={<CalendarDays size={16} />} label="Jogos" />
               <NavItem href="/ranking" icon={<Trophy size={16} />} label="Ranking" />
+              <NavItem href="/regras" icon={<BookOpen size={16} />} label="Regras" />
               <NavItem href="/chat" icon={<MessageCircle size={16} />} label="Chat" />
               <NavItem href="/perfil" icon={<UserRound size={16} />} label="Perfil" />
               {profile?.is_admin ? (

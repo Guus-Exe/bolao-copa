@@ -22,7 +22,7 @@ export async function getRankingEntries(): Promise<{
   const { data: rankingData, error: viewError } = await supabaseAdmin
     .from("ranking_view")
     .select(
-      "user_id, username, avatar_url, total_points, total_predictions, exact_scores, correct_predictions, position"
+      "user_id, username, avatar_url, total_points, total_predictions, exact_scores, exact_scores_hosts, exact_scores_brazil, correct_predictions, position"
     )
     .order("position", { ascending: true })
 
@@ -68,6 +68,8 @@ export async function getRankingEntries(): Promise<{
       const userPreds = predictionsByUser.get(profile.id) ?? []
       let totalPoints = 0
       let exactScores = 0
+      let exactScoresHosts = 0
+      let exactScoresBrazil = 0
       let correctPredictions = 0
 
       userPreds.forEach((pred) => {
@@ -87,6 +89,10 @@ export async function getRankingEntries(): Promise<{
           pred.predicted_away_score === game.away_score
         ) {
           exactScores++
+          const isHost = ["Estados Unidos", "México", "Canadá"].includes(game.home_team) || ["Estados Unidos", "México", "Canadá"].includes(game.away_team)
+          const isBrazil = game.home_team === "Brasil" || game.away_team === "Brasil"
+          if (isHost) exactScoresHosts++
+          if (isBrazil) exactScoresBrazil++
         }
       })
 
@@ -97,15 +103,19 @@ export async function getRankingEntries(): Promise<{
         total_points: totalPoints,
         total_predictions: userPreds.length,
         exact_scores: exactScores,
+        exact_scores_hosts: exactScoresHosts,
+        exact_scores_brazil: exactScoresBrazil,
         correct_predictions: correctPredictions,
         position: 0
       }
     })
 
-    // Ordena de acordo com o criterio da ranking_view
+    // Ordena de acordo com o criterio: pontos -> placares exatos -> placares exatos anfitriões -> placares exatos brasil
     entries.sort((a, b) => {
       if (b.total_points !== a.total_points) return b.total_points - a.total_points
       if (b.exact_scores !== a.exact_scores) return b.exact_scores - a.exact_scores
+      if (b.exact_scores_hosts !== a.exact_scores_hosts) return b.exact_scores_hosts - a.exact_scores_hosts
+      if (b.exact_scores_brazil !== a.exact_scores_brazil) return b.exact_scores_brazil - a.exact_scores_brazil
       if (b.total_predictions !== a.total_predictions) return b.total_predictions - a.total_predictions
       return a.username.localeCompare(b.username)
     })
@@ -119,6 +129,8 @@ export async function getRankingEntries(): Promise<{
         const isTie =
           prev.total_points === curr.total_points &&
           prev.exact_scores === curr.exact_scores &&
+          prev.exact_scores_hosts === curr.exact_scores_hosts &&
+          prev.exact_scores_brazil === curr.exact_scores_brazil &&
           prev.total_predictions === curr.total_predictions
 
         if (!isTie) {

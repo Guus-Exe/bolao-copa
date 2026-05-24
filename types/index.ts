@@ -30,6 +30,8 @@ export type RankingEntry = {
   total_points: number
   total_predictions: number
   exact_scores: number
+  exact_scores_hosts: number
+  exact_scores_brazil: number
   correct_predictions: number
   position: number
 }
