@@ -158,7 +158,7 @@ export function GameCard({
         <div className="mt-3">
           {isDeadlineClosed ? (
             <span className="flex h-9 w-full items-center justify-center rounded-md border border-yellow-500/30 bg-yellow-500/10 px-3 text-sm font-semibold text-yellow-200">
-              {isFinished ? "Jogo finalizado" : "Em andamento"}
+              {isFinished ? "Jogo Finalizado" : "Palpite Encerrado"}
             </span>
           ) : (
             <Button
