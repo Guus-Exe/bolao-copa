@@ -84,7 +84,7 @@ function EmailModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <Modal title="Alterar email" onClose={onClose}>
+    <Modal title="Alterar email">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="new-email">Novo email</Label>
@@ -146,7 +146,7 @@ function PasswordModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <Modal title="Alterar senha" onClose={onClose}>
+    <Modal title="Alterar senha">
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <PasswordField
           id="new-password"

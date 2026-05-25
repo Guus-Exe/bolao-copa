@@ -49,7 +49,7 @@ export function GameTable({ games }: GameTableProps) {
   const [resultGame, setResultGame] = useState<Game | null>(null)
   const [toast, setToast] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [importing, setImporting] = useState(false)
+
   const [uploadingPDF, setUploadingPDF] = useState(false)
   const [isDeleteAllOpen, setIsDeleteAllOpen] = useState(false)
   const [confirmText, setConfirmText] = useState("")
@@ -214,7 +214,7 @@ export function GameTable({ games }: GameTableProps) {
           <Button
             type="button"
             onClick={() => pdfInputRef.current?.click()}
-            disabled={uploadingPDF || importing}
+            disabled={uploadingPDF}
             className="gap-2 border border-violet-500/30 bg-violet-500/15 text-violet-200 hover:bg-violet-500/25"
           >
             {uploadingPDF ? (

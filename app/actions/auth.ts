@@ -35,7 +35,7 @@ export type AuthState = {
   }
 } | null
 
-export async function signIn(prevState: AuthState, formData: FormData): Promise<AuthState> {
+export async function signIn(_prevState: AuthState, formData: FormData): Promise<AuthState> {
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string
@@ -65,7 +65,7 @@ export async function signIn(prevState: AuthState, formData: FormData): Promise<
   redirect("/dashboard")
 }
 
-export async function signUp(prevState: AuthState, formData: FormData): Promise<AuthState> {
+export async function signUp(_prevState: AuthState, formData: FormData): Promise<AuthState> {
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -141,7 +141,7 @@ export async function signOut() {
   redirect("/login")
 }
 
-export async function forgotPassword(prevState: AuthState, formData: FormData): Promise<AuthState> {
+export async function forgotPassword(_prevState: AuthState, formData: FormData): Promise<AuthState> {
   const data = {
     email: formData.get("email") as string
   }
@@ -190,7 +190,7 @@ export async function forgotPassword(prevState: AuthState, formData: FormData): 
   }
 }
 
-export async function updatePassword(prevState: AuthState, formData: FormData): Promise<AuthState> {
+export async function updatePassword(_prevState: AuthState, formData: FormData): Promise<AuthState> {
   const data = {
     password: formData.get("password") as string,
     confirmPassword: formData.get("confirmPassword") as string
