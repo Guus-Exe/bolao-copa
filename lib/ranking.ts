@@ -1,8 +1,9 @@
+import { cache } from "react"
 import { supabaseAdmin } from "@/lib/supabase/admin"
 import { createServerClient } from "@/lib/supabase/server"
 import type { RankingEntry } from "@/types"
 
-export async function getRankingEntries(): Promise<{
+export const getRankingEntries = cache(async function getRankingEntries(): Promise<{
   ranking: RankingEntry[]
   error: string | null
 }> {
@@ -161,4 +162,4 @@ export async function getRankingEntries(): Promise<{
     console.error("Erro no fallback de calculo de ranking:", fallbackError)
     return { ranking: [], error: "Não foi possível carregar o ranking." }
   }
-}
+})

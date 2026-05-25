@@ -41,20 +41,24 @@ export default async function AppLayout({
     redirect("/login")
   }
 
-  const { data: profileData } = await supabase
-    .from("profiles")
-    .select("username, avatar_url, is_admin")
-    .eq("id", user.id)
-    .single()
+  // Busca perfil e ranking em paralelo após a verificação de autenticação
+  const [profileResult, rankingResult] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("username, avatar_url, is_admin")
+      .eq("id", user.id)
+      .single(),
+    getRankingEntries()
+  ])
 
-  const profile = profileData as {
+  const profile = profileResult.data as {
     username: string
     avatar_url: string | null
     is_admin: boolean
   } | null
   const username = profile?.username ?? "participante"
 
-  const { ranking } = await getRankingEntries()
+  const { ranking } = rankingResult
   const currentUserEntry = ranking.find((r) => r.user_id === user.id)
   const userPosition = currentUserEntry?.position ?? 0
   const isTopPosition = userPosition > 0 && userPosition <= 4

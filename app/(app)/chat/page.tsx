@@ -5,58 +5,56 @@ import type { ChatMessageWithProfile } from "@/types"
 
 export default async function ChatPage() {
   const supabase = createServerClient()
-  const {
-    data: { user }
-  } = await supabase.auth.getUser()
 
+  // Executa o getUser e a busca de mensagens com perfis em paralelo (Passo 1)
+  const [userResult, messagesResult] = await Promise.all([
+    supabase.auth.getUser(),
+    supabaseAdmin
+      .from("chat_messages")
+      .select("id, content, created_at, user_id, profiles(username, avatar_url)")
+      .order("created_at", { ascending: false })
+      .limit(50)
+  ])
+
+  const user = userResult.data.user
+
+  // Busca o perfil do usuário logado (Passo 2)
   const { data: profileData } = await supabase
     .from("profiles")
     .select("username, avatar_url, is_paid")
     .eq("id", user?.id ?? "")
     .single()
+
   const profile = profileData as {
     username: string
     avatar_url: string | null
     is_paid: boolean
   } | null
 
-  const { data: messagesData } = await supabase
-    .from("chat_messages")
-    .select("id, content, created_at, user_id")
-    .order("created_at", { ascending: false })
-    .limit(50)
+  const rawMessages = messagesResult.data ?? []
 
-  const messages = ((messagesData ?? []) as ChatMessageRow[]).reverse()
-  const userIds = Array.from(new Set(messages.map((message) => message.user_id)))
+  // Mapeia e reverte as mensagens para ordem cronológica crescente
+  const initialMessages: ChatMessageWithProfile[] = rawMessages
+    .slice()
+    .reverse()
+    .map((msg) => {
+      const messageProfile = Array.isArray(msg.profiles)
+        ? msg.profiles[0]
+        : msg.profiles
 
-  // Carrega os perfis publicos no servidor para nao depender da RLS do client.
-  const { data: profilesData } = userIds.length
-    ? await supabaseAdmin
-        .from("profiles")
-        .select("id, username, avatar_url")
-        .in("id", userIds)
-    : { data: [] }
-
-  const profilesById = new Map(
-    ((profilesData ?? []) as ProfileRow[]).map((item) => [item.id, item])
-  )
-
-  const initialMessages: ChatMessageWithProfile[] = messages.map((message) => {
-    const messageProfile = profilesById.get(message.user_id)
-
-    return {
-      id: message.id,
-      user_id: message.user_id,
-      content: message.content,
-      created_at: message.created_at,
-      profiles: messageProfile
-        ? {
-            username: messageProfile.username,
-            avatar_url: messageProfile.avatar_url
-          }
-        : null
-    }
-  })
+      return {
+        id: msg.id,
+        user_id: msg.user_id,
+        content: msg.content,
+        created_at: msg.created_at,
+        profiles: messageProfile
+          ? {
+              username: messageProfile.username,
+              avatar_url: messageProfile.avatar_url
+            }
+          : null
+      }
+    })
 
   return (
     <ChatRoom
@@ -71,15 +69,3 @@ export default async function ChatPage() {
   )
 }
 
-type ChatMessageRow = {
-  id: string
-  user_id: string
-  content: string
-  created_at: string
-}
-
-type ProfileRow = {
-  id: string
-  username: string
-  avatar_url: string | null
-}

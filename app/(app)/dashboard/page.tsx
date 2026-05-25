@@ -1,6 +1,5 @@
 import Link from "next/link"
 import { UsersRound } from "lucide-react"
-import { getUserPredictions } from "@/lib/queries/predictions"
 import { GameDashboard } from "@/components/games/GameDashboard"
 import { createServerClient } from "@/lib/supabase/server"
 import type { Game, Prediction } from "@/types"
@@ -9,16 +8,31 @@ import { PendingAccess } from "@/components/PendingAccess"
 
 export default async function DashboardPage() {
   const supabase = createServerClient()
-  const {
-    data: { user }
-  } = await supabase.auth.getUser()
 
-  const { data } = await supabase
-    .from("profiles")
-    .select("username, is_paid, is_admin")
-    .eq("id", user?.id ?? "")
-    .single()
-  const profile = data as {
+  // Passo 1: Busca o usuário autenticado e os jogos em paralelo
+  const [userResult, gamesResult] = await Promise.all([
+    supabase.auth.getUser(),
+    supabase
+      .from("games")
+      .select("*")
+      .order("match_date", { ascending: true })
+  ])
+
+  const user = userResult.data.user
+
+  // Passo 2: Busca o perfil do usuário logado e seus palpites em paralelo
+  const [profileResult, predictionsResult] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("username, is_paid, is_admin")
+      .eq("id", user?.id ?? "")
+      .single(),
+    user
+      ? supabase.from("predictions").select("*").eq("user_id", user.id)
+      : Promise.resolve({ data: [], error: null })
+  ])
+
+  const profile = profileResult.data as {
     username: string
     is_paid: boolean
     is_admin: boolean
@@ -28,6 +42,7 @@ export default async function DashboardPage() {
     return <PendingAccess />
   }
 
+  // Passo 3: Se for administrador, busca usuários pendentes de acesso
   let pendingUsersCount = 0
   if (profile?.is_admin) {
     const { count } = await supabase
@@ -37,19 +52,8 @@ export default async function DashboardPage() {
     pendingUsersCount = count ?? 0
   }
 
-  const { data: gamesData } = await supabase
-    .from("games")
-    .select("*")
-    .order("match_date", { ascending: true })
-
-  const predictionsResult = user
-    ? await getUserPredictions(user.id)
-    : { success: false as const, error: "Você precisa estar logado." }
-
-  const games = (gamesData ?? []) as Game[]
-  const predictions = (
-    predictionsResult.success ? predictionsResult.data : []
-  ) as Prediction[]
+  const games = (gamesResult.data ?? []) as Game[]
+  const predictions = (predictionsResult.data ?? []) as Prediction[]
 
   return (
     <section className="space-y-6">

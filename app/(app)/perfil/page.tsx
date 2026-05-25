@@ -24,18 +24,23 @@ export default async function ProfilePage() {
     redirect("/login")
   }
 
-  const { data: profileData } = await supabase
-    .from("profiles")
-    .select("username, avatar_url")
-    .eq("id", user.id)
-    .single()
-  const profile = profileData as ProfileRow | null
+  // Passo 2: Busca perfil e ranking em paralelo
+  const [profileResult, rankingResult] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("username, avatar_url")
+      .eq("id", user.id)
+      .single(),
+    getRankingEntries()
+  ])
+
+  const profile = profileResult.data as ProfileRow | null
 
   if (!profile) {
     redirect("/dashboard")
   }
 
-  const { ranking } = await getRankingEntries()
+  const { ranking } = rankingResult
   const rankingEntry =
     ranking.find((entry) => entry.user_id === user.id) ?? null
 

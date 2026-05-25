@@ -1,5 +1,6 @@
 import "server-only"
 
+import { cache } from "react"
 import { supabaseAdmin } from "@/lib/supabase/admin"
 import { createServerClient } from "@/lib/supabase/server"
 import type { Game, Prediction, Profile } from "@/types"
@@ -33,7 +34,7 @@ export type AdminPrediction = Prediction & {
   > | null
 }
 
-export async function requireAdmin(): Promise<ActionResult<{ userId: string }>> {
+export const requireAdmin = cache(async function requireAdmin(): Promise<ActionResult<{ userId: string }>> {
   const supabase = createServerClient()
   const {
     data: { user }
@@ -54,7 +55,7 @@ export async function requireAdmin(): Promise<ActionResult<{ userId: string }>> 
   }
 
   return { success: true, data: { userId: user.id } }
-}
+})
 
 export async function getAdminSummary(): Promise<ActionResult<AdminSummary>> {
   const admin = await requireAdmin()
