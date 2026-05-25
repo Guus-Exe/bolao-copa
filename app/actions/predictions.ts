@@ -12,7 +12,6 @@ type ActionResult<T = void> =
   | { success: true; data: T; error?: never }
   | { success: false; error: string; data?: never }
 
-const userIdSchema = z.string().uuid()
 
 export async function savePrediction(
   gameId: string,

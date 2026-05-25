@@ -11,9 +11,6 @@ type ActionResult<T = void> =
   | { success: false; error: string; data?: never }
 
 const userIdSchema = z.string().uuid()
-const messageIdSchema = z.string().uuid()
-const emojiSchema = z.string().min(1).max(10) // Em caso de emojis compostos
-
 export async function sendMessage(
   content: unknown
 ): Promise<ActionResult<ChatMessage>> {

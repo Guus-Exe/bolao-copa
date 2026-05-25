@@ -7,13 +7,11 @@ import {
   MessageCircle,
   Trophy,
   UserRound,
-  LogOut,
-  Menu
+  LogOut
 } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { signOut } from "@/app/actions/auth"
-import { Button } from "@/components/ui/button"
 import { createServerClient } from "@/lib/supabase/server"
 import { cn } from "@/lib/utils"
 

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, ArrowLeft, Home, CircleSlash } from "lucide-react";
+import { ArrowLeft, Home, CircleSlash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function NotFound() {

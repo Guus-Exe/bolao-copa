@@ -1,5 +1,6 @@
 import "server-only"
 
+import { cache } from "react"
 import { createServerClient } from "@/lib/supabase/server"
 import type { Prediction } from "@/types"
 import { z } from "zod"
@@ -10,7 +11,7 @@ export type ActionResult<T = void> =
 
 const userIdSchema = z.string().uuid()
 
-export async function getUserPredictions(
+export const getUserPredictions = cache(async function getUserPredictions(
   userId: string
 ): Promise<ActionResult<Prediction[]>> {
   const parsed = userIdSchema.safeParse(userId)
@@ -49,4 +50,4 @@ export async function getUserPredictions(
   }
 
   return { success: true, data: (data ?? []) as Prediction[] }
-}
+})

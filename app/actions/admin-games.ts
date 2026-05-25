@@ -7,7 +7,7 @@ import { z } from "zod"
 
 import { supabaseAdmin } from "@/lib/supabase/admin"
 import { adminGameSchema } from "@/lib/validations"
-import { fetchFixtures, fetchAllWorldCupFixtures } from "@/lib/api-football"
+import { fetchAllWorldCupFixtures } from "@/lib/api-football"
 import { extractGamesFromText, extractTextFromPDF } from "@/lib/pdf-game-extractor"
 import { requireAdmin } from "@/lib/queries/admin"
 import type { Game } from "@/types"

@@ -1,10 +1,10 @@
 "use client"
 
-import { CalendarPlus, Download, Edit3, FileText, ListChecks, Loader2, Trash2, RefreshCw, Upload } from "lucide-react"
+import { CalendarPlus, Download, Edit3, ListChecks, Loader2, Trash2, RefreshCw, Upload } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useMemo, useRef, useState, type ReactNode } from "react"
 
-import { deleteAllGames, deleteGame, importWorldCupGames, importGamesFromUploadedPDF } from "@/app/actions/admin-games"
+import { deleteAllGames, deleteGame, importGamesFromUploadedPDF } from "@/app/actions/admin-games"
 import { syncGameScore } from "@/app/actions/admin-results"
 import { GameForm } from "@/components/admin/GameForm"
 import { ResultModal } from "@/components/admin/ResultModal"
@@ -123,36 +123,6 @@ export function GameTable({ games }: GameTableProps) {
     showToast("Placar sincronizado e pontos calculados!")
   }
 
-  async function handleImport() {
-    setError(null)
-    setImporting(true)
-    setToast("Importando jogos da Copa do Mundo...")
-
-    try {
-      const result = await importWorldCupGames()
-
-      if (!result.success) {
-        setError(result.error)
-        setToast(null)
-        return
-      }
-
-      const { imported, skipped, total } = result.data
-
-      if (imported === 0) {
-        showToast(`Nenhum jogo novo para importar. (${skipped} já cadastrados)`)
-      } else {
-        showToast(
-          `${imported} jogo(s) importado(s) com sucesso! (${skipped} já existiam, ${total} total na API)`
-        )
-      }
-    } catch {
-      setError("Erro inesperado ao importar jogos.")
-      setToast(null)
-    } finally {
-      setImporting(false)
-    }
-  }
 
 
 
