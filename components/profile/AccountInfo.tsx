@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { KeyRound, Loader2, Mail } from "lucide-react"
+import { KeyRound, Loader2, Mail, Eye, EyeOff } from "lucide-react"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
@@ -192,10 +192,27 @@ function PasswordField({
   error?: string
   registration: ReturnType<ReturnType<typeof useForm<PasswordValues>>["register"]>
 }) {
+  const [visible, setVisible] = useState(false)
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
-      <Input id={id} type="password" autoComplete="new-password" disabled={disabled} {...registration} />
+      <div className="relative">
+        <Input
+          id={id}
+          type={visible ? "text" : "password"}
+          autoComplete="new-password"
+          disabled={disabled}
+          className="pr-10"
+          {...registration}
+        />
+        <button
+          type="button"
+          onClick={() => setVisible(!visible)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)] focus:outline-none transition-colors"
+        >
+          {visible ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </button>
+      </div>
       {error ? <p className="text-sm text-red-300">{error}</p> : null}
     </div>
   )

@@ -1,6 +1,6 @@
 "use client"
 
-import { Trophy, Loader2 } from "lucide-react"
+import { Trophy, Loader2, Eye, EyeOff } from "lucide-react"
 import { useActionState, useEffect, useState } from "react"
 import type { ReactNode } from "react"
 import Link from "next/link"
@@ -50,6 +50,8 @@ export function AuthForm({
 }: AuthFormProps) {
   const [state, formAction, isPending] = useActionState(action, { message })
   const [email, setEmail] = useState(state?.data?.email || "")
+  const [showPasswordVisible, setShowPasswordVisible] = useState(false)
+  const [showConfirmPasswordVisible, setShowConfirmPasswordVisible] = useState(false)
 
   useEffect(() => {
     if (showRememberMe && !state?.data?.email) {
@@ -139,16 +141,31 @@ export function AuthForm({
                     </Link>
                   )}
                 </div>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                  minLength={6}
-                  placeholder="Minimo 6 caracteres"
-                  className={state?.errors?.password ? "border-red-500 focus-visible:ring-red-500" : ""}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPasswordVisible ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
+                    minLength={6}
+                    placeholder="Minimo 6 caracteres"
+                    className={`pr-10 ${
+                      state?.errors?.password ? "border-red-500 focus-visible:ring-red-500" : ""
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordVisible(!showPasswordVisible)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)] focus:outline-none transition-colors"
+                  >
+                    {showPasswordVisible ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
                 {state?.errors?.password && (
                   <p className="text-sm text-red-500">{state.errors.password[0]}</p>
                 )}
@@ -157,16 +174,31 @@ export function AuthForm({
             {showConfirmPassword && (
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirmar Senha</Label>
-                <Input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  minLength={6}
-                  placeholder="Repita a nova senha"
-                  className={state?.errors?.confirmPassword ? "border-red-500 focus-visible:ring-red-500" : ""}
-                />
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showConfirmPasswordVisible ? "text" : "password"}
+                    autoComplete="new-password"
+                    required
+                    minLength={6}
+                    placeholder="Repita a nova senha"
+                    className={`pr-10 ${
+                      state?.errors?.confirmPassword ? "border-red-500 focus-visible:ring-red-500" : ""
+                    }`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPasswordVisible(!showConfirmPasswordVisible)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)] focus:outline-none transition-colors"
+                  >
+                    {showConfirmPasswordVisible ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
                 {state?.errors?.confirmPassword && (
                   <p className="text-sm text-red-500">{state.errors.confirmPassword[0]}</p>
                 )}
