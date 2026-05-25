@@ -51,8 +51,7 @@ export async function signIn(_prevState: AuthState, formData: FormData): Promise
     }
   }
 
-  const rememberMe = formData.get("remember") === "on"
-  const supabase = createServerClient(rememberMe)
+  const supabase = createServerClient()
   const { error } = await supabase.auth.signInWithPassword(parsed.data)
 
   if (error) {

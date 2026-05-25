@@ -27,9 +27,11 @@ export async function updateSession(request: NextRequest) {
           supabaseResponse = NextResponse.next({
             request,
           })
-          cookiesToSet.forEach(({ name, value, options }) =>
+          cookiesToSet.forEach(({ name, value, options }) => {
+            delete options.maxAge
+            delete options.expires
             supabaseResponse.cookies.set(name, value, options)
-          )
+          })
         },
       },
     }
@@ -39,8 +41,12 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Rotas protegidas padrão
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup')
+  const isAuthRoute = 
+    request.nextUrl.pathname.startsWith('/login') || 
+    request.nextUrl.pathname.startsWith('/signup') ||
+    request.nextUrl.pathname.startsWith('/forgot-password') ||
+    request.nextUrl.pathname.startsWith('/reset-password') ||
+    request.nextUrl.pathname.startsWith('/auth/')
   
   if (!user && !isAuthRoute && request.nextUrl.pathname !== '/') {
     // Redireciona usuários não autenticados para login, a menos que estejam na landing page ou nas rotas de auth
@@ -49,8 +55,8 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (user && isAuthRoute) {
-    // Redireciona usuários logados tentando acessar login/signup para o dashboard
+  if (user && isAuthRoute && !request.nextUrl.pathname.startsWith('/reset-password')) {
+    // Redireciona usuários logados tentando acessar login/signup/forgot-password para o dashboard
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)

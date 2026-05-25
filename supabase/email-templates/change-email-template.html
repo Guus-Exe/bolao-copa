@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirme seu novo email — Bolão da Copa 2026</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #0a0f0d;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: #f0fdf4;
+      -webkit-font-smoothing: antialiased;
+    }
+    table {
+      border-collapse: collapse;
+    }
+    .wrapper {
+      width: 100%;
+      table-layout: fixed;
+      background-color: #0a0f0d;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #111a14;
+      border: 1px solid rgba(34, 197, 94, 0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    .header {
+      background: linear-gradient(135deg, #111a14 0%, #1a2b1e 100%);
+      padding: 30px;
+      text-align: center;
+      border-bottom: 1px solid rgba(34, 197, 94, 0.1);
+    }
+    .logo-text {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: #facc15;
+      text-transform: uppercase;
+      margin: 0;
+    }
+    .logo-subtext {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: #22c55e;
+      text-transform: uppercase;
+      margin: 5px 0 0 0;
+    }
+    .content {
+      padding: 40px 30px;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #f0fdf4;
+      margin-top: 0;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #86efac;
+      margin-bottom: 24px;
+    }
+    .highlight-box {
+      background-color: #1a2b1e;
+      border-left: 4px solid #facc15;
+      padding: 15px 20px;
+      border-radius: 4px;
+      margin-bottom: 30px;
+    }
+    .highlight-box p {
+      margin: 0;
+      font-size: 14px;
+      color: #f0fdf4;
+      word-break: break-all;
+    }
+    .button-container {
+      text-align: center;
+      margin: 35px 0;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #22c55e;
+      color: #0a0f0d !important;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 14px 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 14px rgba(34, 197, 94, 0.4);
+      transition: all 0.2s ease-in-out;
+    }
+    .footer {
+      background-color: #0d1410;
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid rgba(34, 197, 94, 0.1);
+    }
+    .footer p {
+      font-size: 12px;
+      color: #4ade80;
+      margin: 0 0 10px 0;
+    }
+    .footer a {
+      color: #22c55e;
+      text-decoration: none;
+    }
+    .url-fallback {
+      font-size: 12px;
+      color: #4ade80;
+      word-break: break-all;
+      text-align: center;
+      margin-top: 25px;
+    }
+    .url-fallback a {
+      color: #facc15;
+    }
+  </style>
+</head>
+<body>
+  <table class="wrapper" width="100%" cellpadding="0" cellspacing="0">
+    <tr>
+      <td>
+        <table class="container" width="100%" cellpadding="0" cellspacing="0">
+          <!-- Header -->
+          <tr>
+            <td class="header">
+              <div class="logo-text">🏆 Bolão da Copa</div>
+              <div class="logo-subtext">Rumo a 2026</div>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td class="content">
+              <h1>Confirmação de Alteração de Email</h1>
+              <p>Olá,</p>
+              <p>Você solicitou a alteração do endereço de email associado à sua conta do Bolão da Copa 2026. Para confirmar que este novo endereço pertence a você, clique no botão de validação abaixo:</p>
+              
+              <div class="button-container">
+                <a href="{{ .ConfirmationURL }}" class="btn" target="_blank">Confirmar Novo Email</a>
+              </div>
+              
+              <div class="highlight-box">
+                <p><strong>Novo endereço:</strong> {{ .NewEmail }}</p>
+              </div>
+              
+              <p>Se você não realizou essa alteração ou não reconhece essa ação, pode ignorar este email com segurança. O seu endereço de email antigo continuará ativo.</p>
+              
+              <div class="url-fallback">
+                Caso o botão não funcione, copie e cole o link abaixo no seu navegador:<br>
+                <a href="{{ .ConfirmationURL }}">{{ .ConfirmationURL }}</a>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td class="footer">
+              <p>Você está recebendo este email porque possui cadastro no Bolão da Copa 2026.</p>
+              <p>&copy; 2026 Bolão da Copa. Todos os direitos reservados.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

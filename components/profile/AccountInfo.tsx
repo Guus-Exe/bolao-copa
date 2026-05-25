@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { KeyRound, Loader2, Mail, Eye, EyeOff } from "lucide-react"
+import { KeyRound, Loader2, Mail, Eye, EyeOff, ArrowRight, AlertTriangle, CheckCircle2 } from "lucide-react"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
@@ -9,9 +9,15 @@ import type { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle
+} from "@/components/ui/dialog"
 import { createClient } from "@/lib/supabase/client"
 import { accountEmailSchema, passwordUpdateSchema } from "@/lib/validations"
-import { cn } from "@/lib/utils"
+
 
 type EmailValues = z.infer<typeof accountEmailSchema>
 type PasswordValues = z.infer<typeof passwordUpdateSchema>
@@ -48,13 +54,13 @@ export function AccountInfo({ email }: { email: string }) {
         </div>
       </div>
 
-      {modal === "email" ? <EmailModal onClose={() => setModal(null)} /> : null}
+      {modal === "email" ? <EmailModal email={email} onClose={() => setModal(null)} /> : null}
       {modal === "password" ? <PasswordModal onClose={() => setModal(null)} /> : null}
     </section>
   )
 }
 
-function EmailModal({ onClose }: { onClose: () => void }) {
+function EmailModal({ email, onClose }: { email: string; onClose: () => void }) {
   const [feedback, setFeedback] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -79,40 +85,103 @@ function EmailModal({ onClose }: { onClose: () => void }) {
       }
 
       form.reset()
-      setFeedback("Verifique seu novo email para confirmar a alteracao.")
+      setFeedback("Verifique seu novo email para confirmar a alteração.")
     })
   }
 
   return (
-    <Modal title="Alterar email">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="new-email">Novo email</Label>
-          <Input
-            id="new-email"
-            type="email"
-            autoComplete="email"
-            disabled={isPending}
-            {...form.register("email")}
-          />
-          {form.formState.errors.email?.message ? (
-            <p className="text-sm text-red-300">{form.formState.errors.email.message}</p>
-          ) : null}
-        </div>
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="w-full max-w-md border-[var(--border-strong)] bg-[var(--bg-surface)] p-6 shadow-2xl text-[var(--text-primary)] rounded-lg">
+        <DialogHeader className="mb-4">
+          <DialogTitle className="font-[family-name:var(--font-display)] text-3xl tracking-wide text-left">
+            Alterar email
+          </DialogTitle>
+        </DialogHeader>
 
-        <ModalFeedback feedback={feedback} error={error} />
+        {feedback ? (
+          <div className="text-center py-6 space-y-4 animate-fade-slide">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--green-glow)] border border-[var(--green-500)] text-[var(--green-500)] mb-2 relative">
+              <Mail className="h-8 w-8 animate-bounce" />
+              <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--green-500)] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-4 w-4 bg-[var(--green-500)]"></span>
+              </span>
+            </div>
+            <h4 className="font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--text-primary)]">
+              Verifique seu email!
+            </h4>
+            <p className="text-sm text-[var(--text-secondary)] leading-relaxed max-w-sm mx-auto">
+              Enviamos instruções de confirmação para o novo email. Acesse a caixa de entrada para confirmar.
+            </p>
+            <div className="bg-[var(--bg-elevated)] border border-[var(--border-strong)] rounded-lg p-4 text-xs text-[var(--text-secondary)] text-left space-y-2">
+              <p className="font-semibold text-[var(--text-primary)]">Instruções importantes:</p>
+              <p>1. Acesse o seu <strong>novo email</strong> e confirme a alteração.</p>
+              <p>2. Por segurança, você também precisará confirmar a alteração no link enviado para o seu <strong>email antigo</strong>.</p>
+              <p className="text-[var(--text-muted)] text-[10px] mt-1">Dica: Verifique também a pasta de Spam se não encontrar o email.</p>
+            </div>
+            <Button type="button" onClick={onClose} className="w-full mt-4">
+              Fechar
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-3 text-xs">
+              <div className="flex-1 min-w-0">
+                <span className="text-[var(--text-muted)] font-semibold uppercase tracking-wider block mb-0.5">Email Atual</span>
+                <span className="text-[var(--text-primary)] break-all font-medium">{email}</span>
+              </div>
+              <div className="flex shrink-0 items-center justify-center w-8 h-8 rounded-full bg-[var(--green-glow)] text-[var(--green-500)] border border-[var(--border-strong)]">
+                <ArrowRight className="h-4 w-4" />
+              </div>
+            </div>
 
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Fechar
-          </Button>
-          <Button type="submit" disabled={isPending} className="gap-2">
-            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
-            Enviar confirmacao
-          </Button>
-        </div>
-      </form>
-    </Modal>
+            <div className="space-y-2">
+              <Label htmlFor="new-email">Novo email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-secondary)]" />
+                <Input
+                  id="new-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="exemplo@email.com"
+                  disabled={isPending}
+                  className="pl-10 border-[var(--border-strong)] focus-visible:ring-1 focus-visible:ring-[var(--green-500)] bg-[var(--bg-elevated)]"
+                  {...form.register("email")}
+                />
+              </div>
+              {form.formState.errors.email?.message ? (
+                <p className="text-xs text-red-400 mt-1">{form.formState.errors.email.message}</p>
+              ) : null}
+            </div>
+
+            <div className="rounded-lg bg-yellow-500/10 border border-yellow-500/20 p-3 text-xs text-yellow-300 flex items-start gap-2.5">
+              <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-yellow-400" />
+              <div>
+                <span className="font-bold block mb-0.5">Confirmação Dupla</span>
+                Por segurança, exijimos a confirmação do link tanto no email antigo quanto no novo para finalizar a alteração.
+              </div>
+            </div>
+
+            {error ? (
+              <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-xs text-red-400 flex items-start gap-2.5">
+                <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-red-500" />
+                <span>{error}</span>
+              </div>
+            ) : null}
+
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isPending} className="gap-2">
+                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Mail className="h-4 w-4" />}
+                Alterar Email
+              </Button>
+            </div>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -146,36 +215,66 @@ function PasswordModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <Modal title="Alterar senha">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <PasswordField
-          id="new-password"
-          label="Nova senha"
-          disabled={isPending}
-          error={form.formState.errors.password?.message}
-          registration={form.register("password")}
-        />
-        <PasswordField
-          id="confirm-password"
-          label="Confirmar senha"
-          disabled={isPending}
-          error={form.formState.errors.confirmPassword?.message}
-          registration={form.register("confirmPassword")}
-        />
+    <Dialog open={true} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="w-full max-w-md border-[var(--border-strong)] bg-[var(--bg-surface)] p-6 shadow-2xl text-[var(--text-primary)] rounded-lg">
+        <DialogHeader className="mb-4">
+          <DialogTitle className="font-[family-name:var(--font-display)] text-3xl tracking-wide text-left">
+            Alterar senha
+          </DialogTitle>
+        </DialogHeader>
 
-        <ModalFeedback feedback={feedback} error={error} />
+        {feedback ? (
+          <div className="text-center py-6 space-y-4 animate-fade-slide">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[var(--green-glow)] border border-[var(--green-500)] text-[var(--green-500)] mb-2">
+              <CheckCircle2 className="h-8 w-8 text-[var(--green-500)]" />
+            </div>
+            <h4 className="font-[family-name:var(--font-display)] text-2xl font-bold text-[var(--text-primary)]">
+              Senha alterada!
+            </h4>
+            <p className="text-sm text-[var(--text-secondary)] max-w-xs mx-auto">
+              Sua senha foi atualizada com sucesso. Utilize a nova senha no próximo acesso.
+            </p>
+            <Button type="button" onClick={onClose} className="w-full mt-4">
+              Fechar
+            </Button>
+          </div>
+        ) : (
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <PasswordField
+              id="new-password"
+              label="Nova senha"
+              disabled={isPending}
+              error={form.formState.errors.password?.message}
+              registration={form.register("password")}
+            />
+            <PasswordField
+              id="confirm-password"
+              label="Confirmar senha"
+              disabled={isPending}
+              error={form.formState.errors.confirmPassword?.message}
+              registration={form.register("confirmPassword")}
+            />
 
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Fechar
-          </Button>
-          <Button type="submit" disabled={isPending} className="gap-2">
-            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
-            Salvar senha
-          </Button>
-        </div>
-      </form>
-    </Modal>
+            {error ? (
+              <div className="rounded-lg bg-red-500/10 border border-red-500/20 p-3 text-xs text-red-400 flex items-start gap-2.5">
+                <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-red-500" />
+                <span>{error}</span>
+              </div>
+            ) : null}
+
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isPending} className="gap-2">
+                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+                Salvar senha
+              </Button>
+            </div>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -218,41 +317,3 @@ function PasswordField({
   )
 }
 
-function Modal({
-  title,
-  children
-}: {
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-6">
-      <div className="w-full max-w-md rounded-lg border border-[var(--border-strong)] bg-[var(--bg-surface)] p-5 shadow-2xl">
-        <div className="mb-4 flex items-center justify-between gap-4">
-          <h3 className="font-[family-name:var(--font-display)] text-3xl tracking-wide">
-            {title}
-          </h3>
-        </div>
-        {children}
-      </div>
-    </div>
-  )
-}
-
-function ModalFeedback({
-  feedback,
-  error
-}: {
-  feedback: string | null
-  error: string | null
-}) {
-  if (!feedback && !error) {
-    return null
-  }
-
-  return (
-    <p className={cn("text-sm", error ? "text-red-300" : "text-green-200")}>
-      {error ?? feedback}
-    </p>
-  )
-}
