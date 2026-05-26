@@ -1,6 +1,9 @@
 "use server"
 
+import "server-only"
+
 import { redirect } from "next/navigation"
+
 
 import { supabaseAdmin } from "@/lib/supabase/admin"
 import { createServerClient } from "@/lib/supabase/server"

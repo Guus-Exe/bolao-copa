@@ -1,5 +1,8 @@
+import "server-only"
+
 import { unstable_cache } from "next/cache"
 import { supabaseAdmin } from "@/lib/supabase/admin"
+
 import type { RankingEntry } from "@/types"
 
 async function fetchRankingData(): Promise<{

@@ -1,5 +1,7 @@
 "use server"
 
+import "server-only"
+
 import { createServerClient } from "@/lib/supabase/server"
 import { supabaseAdmin } from "@/lib/supabase/admin"
 import { chatMessageSchema } from "@/lib/validations"
