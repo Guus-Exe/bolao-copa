@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { KeyRound, Loader2, Mail, Eye, EyeOff, ArrowRight, AlertTriangle, CheckCircle2 } from "lucide-react"
+import { KeyRound, Loader2, Mail, Eye, EyeOff, AlertTriangle, CheckCircle2 } from "lucide-react"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import type { z } from "zod"
@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
@@ -96,6 +97,9 @@ function EmailModal({ email, onClose }: { email: string; onClose: () => void }) 
           <DialogTitle className="font-[family-name:var(--font-display)] text-3xl tracking-wide text-left">
             Alterar email
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Formulário para alteração de e-mail de conta
+          </DialogDescription>
         </DialogHeader>
 
         {feedback ? (
@@ -115,8 +119,7 @@ function EmailModal({ email, onClose }: { email: string; onClose: () => void }) 
             </p>
             <div className="bg-[var(--bg-elevated)] border border-[var(--border-strong)] rounded-lg p-4 text-xs text-[var(--text-secondary)] text-left space-y-2">
               <p className="font-semibold text-[var(--text-primary)]">Instruções importantes:</p>
-              <p>1. Acesse o seu <strong>novo email</strong> e confirme a alteração.</p>
-              <p>2. Por segurança, você também precisará confirmar a alteração no link enviado para o seu <strong>email antigo</strong>.</p>
+              <p>Acesse o seu <strong>novo email</strong> e clique no link de confirmação para finalizar a alteração.</p>
               <p className="text-[var(--text-muted)] text-[10px] mt-1">Dica: Verifique também a pasta de Spam se não encontrar o email.</p>
             </div>
             <Button type="button" onClick={onClose} className="w-full mt-4">
@@ -125,13 +128,10 @@ function EmailModal({ email, onClose }: { email: string; onClose: () => void }) 
           </div>
         ) : (
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="flex items-center justify-between gap-3 rounded-lg border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-3 text-xs">
-              <div className="flex-1 min-w-0">
+            <div className="rounded-lg border border-[var(--border-strong)] bg-[var(--bg-elevated)] p-3 text-xs">
+              <div className="min-w-0">
                 <span className="text-[var(--text-muted)] font-semibold uppercase tracking-wider block mb-0.5">Email Atual</span>
                 <span className="text-[var(--text-primary)] break-all font-medium">{email}</span>
-              </div>
-              <div className="flex shrink-0 items-center justify-center w-8 h-8 rounded-full bg-[var(--green-glow)] text-[var(--green-500)] border border-[var(--border-strong)]">
-                <ArrowRight className="h-4 w-4" />
               </div>
             </div>
 
@@ -157,8 +157,8 @@ function EmailModal({ email, onClose }: { email: string; onClose: () => void }) 
             <div className="rounded-lg bg-yellow-500/10 border border-yellow-500/20 p-3 text-xs text-yellow-300 flex items-start gap-2.5">
               <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5 text-yellow-400" />
               <div>
-                <span className="font-bold block mb-0.5">Confirmação Dupla</span>
-                Por segurança, exijimos a confirmação do link tanto no email antigo quanto no novo para finalizar a alteração.
+                <span className="font-bold block mb-0.5">Confirmação de E-mail</span>
+                Você precisará clicar no link enviado para o seu novo e-mail para confirmar e finalizar a alteração.
               </div>
             </div>
 
@@ -221,6 +221,9 @@ function PasswordModal({ onClose }: { onClose: () => void }) {
           <DialogTitle className="font-[family-name:var(--font-display)] text-3xl tracking-wide text-left">
             Alterar senha
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Formulário para alteração de senha de conta
+          </DialogDescription>
         </DialogHeader>
 
         {feedback ? (
