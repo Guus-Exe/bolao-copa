@@ -79,7 +79,7 @@ export const getRankingEntries = cache(async function getRankingEntries(): Promi
         if (pred.created_at < firstPredictionAt) {
           firstPredictionAt = pred.created_at
         }
-        
+
         const points = pred.points_earned ?? 0
         totalPoints += points
         if (points > 0) {
@@ -130,7 +130,7 @@ export const getRankingEntries = cache(async function getRankingEntries(): Promi
       if (b.exact_scores !== a.exact_scores) return b.exact_scores - a.exact_scores
       if (b.exact_scores_hosts !== a.exact_scores_hosts) return b.exact_scores_hosts - a.exact_scores_hosts
       if (b.exact_scores_brazil !== a.exact_scores_brazil) return b.exact_scores_brazil - a.exact_scores_brazil
-      
+
       const timeA = new Date(a.first_prediction_at).getTime()
       const timeB = new Date(b.first_prediction_at).getTime()
       if (timeA !== timeB) return timeA - timeB

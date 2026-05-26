@@ -1,4 +1,5 @@
-import { BookOpen, Scale, Target, AlertTriangle } from "lucide-react"
+import { BookOpen, Scale, Target, AlertTriangle, Trophy } from "lucide-react"
+
 
 export const metadata = {
   title: "Regras do Bolão | Bolão da Copa",
@@ -123,6 +124,51 @@ export default function RegrasPage() {
                 </div>
               </li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="space-y-6 pt-6">
+        <h2 className="flex items-center gap-2 font-[family-name:var(--font-display)] text-2xl text-[var(--yellow-400)]">
+          <Trophy size={24} />
+          Divisão de Prêmios (Premiação)
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* 1º Lugar */}
+          <div className="landing-card relative flex flex-col rounded-xl border p-6 transition-all hover:border-[var(--yellow-500)] hover:shadow-[0_0_20px_rgba(234,179,8,0.15)]">
+            <div className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full bg-[var(--yellow-500)] font-bold text-[var(--bg-base)] shadow-lg">
+              1º
+            </div>
+            <h3 className="mb-2 text-xl font-semibold text-[var(--text-primary)]">1º Lugar</h3>
+            <p className="text-3xl font-bold text-[var(--yellow-500)]">60%</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-1">do valor arrecadado</p>
+          </div>
+          {/* 2º Lugar */}
+          <div className="landing-card relative flex flex-col rounded-xl border p-6 transition-all hover:border-gray-400 hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+            <div className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full bg-gray-400 font-bold text-[var(--bg-base)] shadow-lg">
+              2º
+            </div>
+            <h3 className="mb-2 text-xl font-semibold text-[var(--text-primary)]">2º Lugar</h3>
+            <p className="text-3xl font-bold text-gray-300">20%</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-1">do valor arrecadado</p>
+          </div>
+          {/* 3º Lugar */}
+          <div className="landing-card relative flex flex-col rounded-xl border p-6 transition-all hover:border-orange-500 hover:shadow-[0_0_20px_rgba(249,115,22,0.1)]">
+            <div className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full bg-orange-600 font-bold text-white shadow-lg">
+              3º
+            </div>
+            <h3 className="mb-2 text-xl font-semibold text-[var(--text-primary)]">3º Lugar</h3>
+            <p className="text-3xl font-bold text-orange-500">15%</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-1">do valor arrecadado</p>
+          </div>
+          {/* 4º Lugar */}
+          <div className="landing-card relative flex flex-col rounded-xl border p-6 transition-all hover:border-emerald-600 hover:shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+            <div className="absolute -right-3 -top-3 flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 font-bold text-white shadow-lg">
+              4º
+            </div>
+            <h3 className="mb-2 text-xl font-semibold text-[var(--text-primary)]">4º Lugar</h3>
+            <p className="text-3xl font-bold text-emerald-500">5%</p>
+            <p className="text-xs text-[var(--text-secondary)] mt-1">do valor arrecadado</p>
           </div>
         </div>
       </section>
