@@ -7,6 +7,8 @@ import { UsernameForm } from "@/components/profile/UsernameForm"
 import { getRankingEntries } from "@/lib/queries/ranking"
 import { createServerClient } from "@/lib/supabase/server"
 
+export const dynamic = "force-dynamic"
+
 export const revalidate = 0
 
 type ProfileRow = {

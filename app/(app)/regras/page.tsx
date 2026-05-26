@@ -1,6 +1,8 @@
 import { BookOpen, Scale, Target, AlertTriangle, Trophy } from "lucide-react"
 
 
+export const dynamic = "force-dynamic"
+
 export const metadata = {
   title: "Regras do Bolão | Bolão da Copa",
   description: "Entenda como funcionam os pontos e os critérios de desempate do Bolão."

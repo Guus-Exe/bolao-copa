@@ -4,7 +4,7 @@ import { UserHighlight } from "@/components/ranking/UserHighlight"
 import { getRankingEntries } from "@/lib/queries/ranking"
 import { createServerClient } from "@/lib/supabase/server"
 
-export const revalidate = 60
+export const dynamic = "force-dynamic"
 
 async function getAuthAndAdminStatus(supabase: any) {
   const { data: { user } } = await supabase.auth.getUser()

@@ -1,6 +1,8 @@
 import { getAdminUsers } from "@/lib/queries/admin"
 import { AccessControlTable } from "@/components/admin/AccessControlTable"
 
+export const dynamic = "force-dynamic"
+
 export default async function AdminControlPage() {
   const result = await getAdminUsers()
 

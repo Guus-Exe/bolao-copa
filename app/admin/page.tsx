@@ -1,5 +1,7 @@
 import Link from "next/link"
 
+export const dynamic = "force-dynamic"
+
 import { getAdminGames, getAdminSummary, getAdminUsers } from "@/lib/queries/admin"
 import { StatCards } from "@/components/admin/StatCards"
 import { Button } from "@/components/ui/button"

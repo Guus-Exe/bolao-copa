@@ -1,4 +1,6 @@
 import { getAdminSummary, getAdminUsers } from "@/lib/queries/admin"
+
+export const dynamic = "force-dynamic"
 import { StatCards } from "@/components/admin/StatCards"
 import { UserTable } from "@/components/admin/UserTable"
 

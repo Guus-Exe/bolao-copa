@@ -1,4 +1,6 @@
 import { getAdminGames } from "@/lib/queries/admin"
+
+export const dynamic = "force-dynamic"
 import { GameTable } from "@/components/admin/GameTable"
 
 export default async function AdminGamesPage() {

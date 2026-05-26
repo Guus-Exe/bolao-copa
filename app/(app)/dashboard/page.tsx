@@ -7,6 +7,8 @@ import { getCachedGames } from "@/lib/queries/games"
 
 import { PendingAccess } from "@/components/PendingAccess"
 
+export const dynamic = "force-dynamic"
+
 export default async function DashboardPage() {
   const supabase = createServerClient()
 
