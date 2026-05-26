@@ -17,37 +17,34 @@ export default async function DashboardPage() {
   ])
 
   const user = userResult.data.user
-
-  // Passo 2: Busca o perfil do usuário logado e seus palpites em uma única query (Join PostgREST)
-  const { data: profileData } = user
-    ? await supabase
-        .from("profiles")
-        .select("username, is_paid, is_admin, predictions(*)")
-        .eq("id", user.id)
-        .single()
-    : { data: null }
-
-  const profile = profileData as {
+ 
+  // Passo 2: Busca o perfil do usuário logado e, em paralelo, a contagem de usuários pendentes
+  const [profileResult, pendingCountResult] = user
+    ? await Promise.all([
+        supabase
+          .from("profiles")
+          .select("username, is_paid, is_admin, predictions(*)")
+          .eq("id", user.id)
+          .single(),
+        supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .eq("is_paid", false)
+      ])
+    : [{ data: null }, { count: 0 }]
+ 
+  const profile = profileResult.data as {
     username: string
     is_paid: boolean
     is_admin: boolean
     predictions: Prediction[]
   } | null
-
+ 
   if (!profile?.is_paid) {
     return <PendingAccess />
   }
-
-  // Passo 3: Se for administrador, busca usuários pendentes de acesso
-  let pendingUsersCount = 0
-  if (profile?.is_admin) {
-    const { count } = await supabase
-      .from("profiles")
-      .select("id", { count: "exact", head: true })
-      .eq("is_paid", false)
-    pendingUsersCount = count ?? 0
-  }
-
+ 
+  const pendingUsersCount = profile.is_admin ? (pendingCountResult.count ?? 0) : 0
   const predictions = profile.predictions ?? []
 
 

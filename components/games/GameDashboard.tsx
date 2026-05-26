@@ -35,6 +35,34 @@ export function GameDashboard({ games, predictions }: GameDashboardProps) {
     message: string
   } | null>(null)
 
+  const availableStages = useMemo(() => {
+    const stagesInGames = new Set(games.map((g) => g.stage))
+    return STAGE_ORDER.filter((stage) => stagesInGames.has(stage))
+  }, [games])
+
+  const [activeStage, setActiveStage] = useState<string>(() => {
+    const now = new Date().getTime()
+    for (const stage of STAGE_ORDER) {
+      const stageGames = games.filter((g) => g.stage === stage)
+      if (stageGames.length === 0) continue
+
+      const hasActiveGames = stageGames.some((game) => {
+        const isFinished = game.is_finished && game.home_score !== null && game.away_score !== null
+        const isClosed = now >= new Date(game.match_date).getTime() - 60 * 60 * 1000
+        return !isFinished && !isClosed
+      })
+
+      if (hasActiveGames) {
+        return stage
+      }
+    }
+
+    if (availableStages.length > 0) {
+      return availableStages[availableStages.length - 1]
+    }
+    return "grupo"
+  })
+
   const predictionByGameId = useMemo(() => {
     return new Map(
       savedPredictions.map((prediction) => [prediction.game_id, prediction])
@@ -46,6 +74,8 @@ export function GameDashboard({ games, predictions }: GameDashboardProps) {
 
     return games
       .filter((game) => {
+        if (game.stage !== activeStage) return false
+
         const hasPrediction = predictionByGameId.has(game.id)
         const isClosed = now >= new Date(game.match_date).getTime() - 60 * 60 * 1000
         const isFinished = game.is_finished && game.home_score !== null && game.away_score !== null
@@ -83,7 +113,7 @@ export function GameDashboard({ games, predictions }: GameDashboardProps) {
 
         return timeB - timeA
       })
-  }, [games, predictionByGameId, predictionFilter, statusFilter])
+  }, [games, predictionByGameId, predictionFilter, statusFilter, activeStage])
 
   const gamesByStage = useMemo(() => {
     return STAGE_ORDER.map((stage) => ({
@@ -145,6 +175,46 @@ export function GameDashboard({ games, predictions }: GameDashboardProps) {
             onChange={(value) => setPredictionFilter(value as PredictionFilter)}
           />
         </div>
+      </div>
+
+      {/* Seletor de Fases (Tabs) */}
+      <div className="flex flex-wrap border-b border-[var(--border-strong)] gap-1">
+        {availableStages.map((stage) => {
+          const isActive = activeStage === stage
+          const stageGames = games.filter((g) => g.stage === stage)
+          const openGamesCount = stageGames.filter((g) => {
+            const now = new Date().getTime()
+            const isClosed = now >= new Date(g.match_date).getTime() - 60 * 60 * 1000
+            const isFinished = g.is_finished && g.home_score !== null && g.away_score !== null
+            return !isClosed && !isFinished
+          }).length
+
+          return (
+            <button
+              key={stage}
+              type="button"
+              onClick={() => setActiveStage(stage)}
+              className={cn(
+                "relative pb-3 pt-2 px-4 text-sm font-semibold tracking-wide transition-all focus-visible:outline-none",
+                isActive
+                  ? "text-[var(--green-500)] font-bold"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+              )}
+            >
+              <span className="flex items-center gap-1.5">
+                {STAGE_LABELS[stage] ?? stage}
+                {openGamesCount > 0 && (
+                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--green-500)] px-1 text-[10px] font-bold text-black animate-pulse">
+                    {openGamesCount}
+                  </span>
+                )}
+              </span>
+              {isActive && (
+                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--green-500)] shadow-[0_-2px_10px_var(--green-glow)]" />
+              )}
+            </button>
+          )
+        })}
       </div>
 
       {gamesByStage.length > 0 ? (

@@ -182,7 +182,7 @@ export default function RegrasPage() {
               <p className="text-sm text-[var(--text-secondary)] mt-1">
                 Nas fases eliminatórias (Oitavas de Final em diante), o placar que vale para o bolão é o do <strong>Tempo Regulamentar + Prorrogação</strong>. 
                 <br /><br />
-                Vitórias conquistadas na disputa de Pênaltis <strong>não contam no placar</strong>, sendo a partida considerada um "Empate" para fins de pontuação no bolão.
+                Vitórias conquistadas na disputa de Pênaltis <strong>não contam no placar</strong>, sendo a partida considerada um &quot;Empate&quot; para fins de pontuação no bolão.
               </p>
             </div>
           </div>
