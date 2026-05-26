@@ -1,9 +1,4 @@
 {
-  "regions": ["gru1"],
-  "crons": [
-    {
-      "path": "/api/cron/sync-scores",
-      "schedule": "*/30 * * * *"
-    }
-  ]
+  "regions": ["gru1"]
 }
+
