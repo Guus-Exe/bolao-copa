@@ -2,40 +2,36 @@ import Link from "next/link"
 import { UsersRound } from "lucide-react"
 import { GameDashboard } from "@/components/games/GameDashboard"
 import { createServerClient } from "@/lib/supabase/server"
-import type { Game, Prediction } from "@/types"
+import type { Prediction } from "@/types"
+import { getCachedGames } from "@/lib/queries/games"
 
 import { PendingAccess } from "@/components/PendingAccess"
 
 export default async function DashboardPage() {
   const supabase = createServerClient()
 
-  // Passo 1: Busca o usuário autenticado e os jogos em paralelo
-  const [userResult, gamesResult] = await Promise.all([
+  // Passo 1: Busca o usuário autenticado e obtém os jogos do cache em paralelo
+  const [userResult, games] = await Promise.all([
     supabase.auth.getUser(),
-    supabase
-      .from("games")
-      .select("*")
-      .order("match_date", { ascending: true })
+    getCachedGames()
   ])
 
   const user = userResult.data.user
 
-  // Passo 2: Busca o perfil do usuário logado e seus palpites em paralelo
-  const [profileResult, predictionsResult] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("username, is_paid, is_admin")
-      .eq("id", user?.id ?? "")
-      .single(),
-    user
-      ? supabase.from("predictions").select("*").eq("user_id", user.id)
-      : Promise.resolve({ data: [], error: null })
-  ])
+  // Passo 2: Busca o perfil do usuário logado e seus palpites em uma única query (Join PostgREST)
+  const { data: profileData } = user
+    ? await supabase
+        .from("profiles")
+        .select("username, is_paid, is_admin, predictions(*)")
+        .eq("id", user.id)
+        .single()
+    : { data: null }
 
-  const profile = profileResult.data as {
+  const profile = profileData as {
     username: string
     is_paid: boolean
     is_admin: boolean
+    predictions: Prediction[]
   } | null
 
   if (!profile?.is_paid) {
@@ -52,8 +48,8 @@ export default async function DashboardPage() {
     pendingUsersCount = count ?? 0
   }
 
-  const games = (gamesResult.data ?? []) as Game[]
-  const predictions = (predictionsResult.data ?? []) as Prediction[]
+  const predictions = profile.predictions ?? []
+
 
   return (
     <section className="space-y-6">

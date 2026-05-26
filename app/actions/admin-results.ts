@@ -2,7 +2,7 @@
 
 import "server-only"
 
-import { revalidatePath } from "next/cache"
+import { revalidatePath, revalidateTag } from "next/cache"
 import { z } from "zod"
 
 import { calculatePoints } from "@/lib/scoring"
@@ -18,6 +18,8 @@ function revalidateAdminViews() {
   revalidatePath("/admin/jogos")
   revalidatePath("/admin/usuarios")
   revalidatePath("/admin/controle")
+  revalidateTag("games", "default")
+  revalidateTag("ranking", "default")
 }
 
 export async function recalculateGamePoints(

@@ -6,27 +6,29 @@ import { createServerClient } from "@/lib/supabase/server"
 
 export const revalidate = 60
 
-export default async function RankingPage() {
-  const supabase = createServerClient()
+async function getAuthAndAdminStatus(supabase: any) {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { user: null, isAdmin: false }
 
-  // Passo 1: Busca o usuário e o ranking em paralelo (getRankingEntries é cacheado)
-  const [userResult, rankingResult] = await Promise.all([
-    supabase.auth.getUser(),
-    getRankingEntries()
-  ])
-
-  const user = userResult.data.user
-
-  // Passo 2: Busca perfil do usuário para verificar se é administrador
   const { data: profileData } = await supabase
     .from("profiles")
     .select("is_admin")
-    .eq("id", user?.id ?? "")
+    .eq("id", user.id)
     .single()
 
-  const profile = profileData as { is_admin: boolean } | null
-  const isAdmin = Boolean(profile?.is_admin)
+  return { user, isAdmin: Boolean(profileData?.is_admin) }
+}
 
+export default async function RankingPage() {
+  const supabase = createServerClient()
+
+  // Busca autenticação/perfil de admin e o ranking (cacheado) em paralelo
+  const [authData, rankingResult] = await Promise.all([
+    getAuthAndAdminStatus(supabase),
+    getRankingEntries()
+  ])
+
+  const { user, isAdmin } = authData
   const { ranking, error } = rankingResult
   const awardedRanking = ranking.slice(0, 4)
   const remainingRanking = ranking.slice(4)

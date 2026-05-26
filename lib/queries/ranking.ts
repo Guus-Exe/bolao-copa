@@ -1,24 +1,11 @@
-import { cache } from "react"
+import { unstable_cache } from "next/cache"
 import { supabaseAdmin } from "@/lib/supabase/admin"
-import { createServerClient } from "@/lib/supabase/server"
 import type { RankingEntry } from "@/types"
 
-export const getRankingEntries = cache(async function getRankingEntries(): Promise<{
+async function fetchRankingData(): Promise<{
   ranking: RankingEntry[]
   error: string | null
 }> {
-  const supabase = createServerClient()
-
-  // Verifica se o usuário está autenticado antes de consultar dados confidenciais via admin client
-  const {
-    data: { user },
-    error: authError
-  } = await supabase.auth.getUser()
-
-  if (authError || !user) {
-    return { ranking: [], error: "Não autorizado." }
-  }
-
   // 1. Tenta consultar a ranking_view no banco
   const { data: rankingData, error: viewError } = await supabaseAdmin
     .from("ranking_view")
@@ -161,4 +148,11 @@ export const getRankingEntries = cache(async function getRankingEntries(): Promi
     console.error("Erro no fallback de calculo de ranking:", fallbackError)
     return { ranking: [], error: "Não foi possível carregar o ranking." }
   }
-})
+}
+
+export const getRankingEntries = unstable_cache(
+  async () => fetchRankingData(),
+  ["ranking-entries"],
+  { revalidate: 60, tags: ["ranking"] }
+)
+
