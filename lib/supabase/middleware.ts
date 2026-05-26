@@ -14,6 +14,27 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
+  const isAuthRoute = 
+    request.nextUrl.pathname.startsWith('/login') || 
+    request.nextUrl.pathname.startsWith('/signup') ||
+    request.nextUrl.pathname.startsWith('/forgot-password') ||
+    request.nextUrl.pathname.startsWith('/reset-password') ||
+    request.nextUrl.pathname.startsWith('/auth/')
+
+  // Fast path: Checar se o cookie de sessão do Supabase existe antes de inicializar o cliente.
+  const hasSessionCookie = request.cookies.getAll().some(cookie => 
+    cookie.name.includes('-auth-token')
+  )
+
+  if (!hasSessionCookie) {
+    if (!isAuthRoute && request.nextUrl.pathname !== '/') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+    return supabaseResponse
+  }
+
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -35,26 +56,20 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
+  // getSession é muito mais rápido que getUser pois valida a assinatura do JWT localmente sem bater na API de auth na rede
   const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  const isAuthRoute = 
-    request.nextUrl.pathname.startsWith('/login') || 
-    request.nextUrl.pathname.startsWith('/signup') ||
-    request.nextUrl.pathname.startsWith('/forgot-password') ||
-    request.nextUrl.pathname.startsWith('/reset-password') ||
-    request.nextUrl.pathname.startsWith('/auth/')
+    data: { session },
+  } = await supabase.auth.getSession()
   
+  const user = session?.user ?? null
+
   if (!user && !isAuthRoute && request.nextUrl.pathname !== '/') {
-    // Redireciona usuários não autenticados para login, a menos que estejam na landing page ou nas rotas de auth
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
   if (user && isAuthRoute && !request.nextUrl.pathname.startsWith('/reset-password')) {
-    // Redireciona usuários logados tentando acessar login/signup/forgot-password para o dashboard
     const url = request.nextUrl.clone()
     url.pathname = '/dashboard'
     return NextResponse.redirect(url)
@@ -79,3 +94,4 @@ export async function updateSession(request: NextRequest) {
 
   return supabaseResponse
 }
+
