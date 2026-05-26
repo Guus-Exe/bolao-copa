@@ -26,8 +26,6 @@ export function createServerClient() {
           try {
             const cookieStore = await cookies()
             cookiesToSet.forEach(({ name, value, options }) => {
-              delete options.maxAge
-              delete options.expires
               cookieStore.set(name, value, options)
             })
           } catch {
