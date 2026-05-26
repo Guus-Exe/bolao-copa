@@ -5,10 +5,7 @@ import { revalidatePath } from "next/cache"
 import { supabaseAdmin } from "@/lib/supabase/admin"
 import { createServerClient } from "@/lib/supabase/server"
 import { usernameSchema } from "@/lib/validations"
-
-type ActionResult<T = void> =
-  | { success: true; data: T; error?: never }
-  | { success: false; error: string; data?: never }
+import type { ActionResult } from "@/types"
 
 const AVATAR_BUCKET = "avatars"
 const ALLOWED_AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"]

@@ -133,9 +133,7 @@ export const getRankingEntries = cache(async function getRankingEntries(): Promi
 
       const timeA = new Date(a.first_prediction_at).getTime()
       const timeB = new Date(b.first_prediction_at).getTime()
-      if (timeA !== timeB) return timeA - timeB
-
-      return a.username.localeCompare(b.username)
+      return timeA - timeB
     })
 
     // Atribui posicoes respeitando empates
@@ -148,7 +146,8 @@ export const getRankingEntries = cache(async function getRankingEntries(): Promi
           prev.total_points === curr.total_points &&
           prev.exact_scores === curr.exact_scores &&
           prev.exact_scores_hosts === curr.exact_scores_hosts &&
-          prev.exact_scores_brazil === curr.exact_scores_brazil
+          prev.exact_scores_brazil === curr.exact_scores_brazil &&
+          new Date(prev.first_prediction_at).getTime() === new Date(curr.first_prediction_at).getTime()
 
         if (!isTie) {
           currentRank = i + 1

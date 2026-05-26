@@ -6,15 +6,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDate(date: string | Date) {
-  const d = new Date(date)
-  const utc3Time = d.getTime() - 3 * 60 * 60 * 1000
-  const utc3Date = new Date(utc3Time)
-
   return new Intl.DateTimeFormat("pt-BR", {
     dateStyle: "short",
     timeStyle: "short",
-    timeZone: "UTC"
-  }).format(utc3Date)
+    timeZone: "America/Sao_Paulo"
+  }).format(new Date(date))
 }
 
 export function formatScore(home: number | null, away: number | null) {

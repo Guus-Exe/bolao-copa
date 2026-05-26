@@ -4,11 +4,8 @@ import { createServerClient } from "@/lib/supabase/server"
 import { supabaseAdmin } from "@/lib/supabase/admin"
 import { chatMessageSchema } from "@/lib/validations"
 import type { ChatMessage } from "@/types"
+import type { ActionResult } from "@/types"
 import { z } from "zod"
-
-type ActionResult<T = void> =
-  | { success: true; data: T; error?: never }
-  | { success: false; error: string; data?: never }
 
 const userIdSchema = z.string().uuid()
 export async function sendMessage(

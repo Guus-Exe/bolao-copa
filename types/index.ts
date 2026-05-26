@@ -1,5 +1,10 @@
 import type { Database } from "@/types/database"
 
+/** Tipo de retorno padronizado para Server Actions e queries. */
+export type ActionResult<T = void> =
+  | { success: true; data: T; error?: never }
+  | { success: false; error: string; data?: never }
+
 export type Tables<T extends keyof Database["public"]["Tables"]> =
   Database["public"]["Tables"][T]["Row"]
 
@@ -17,7 +22,7 @@ export type ChatMessageWithProfile = {
     username: string
     avatar_url: string | null
   } | null
-  reactions?: any
+  // reactions removido — migration 20260524173104_drop_chat_reactions.sql
 }
 
 export type GameWithPrediction = Game & {

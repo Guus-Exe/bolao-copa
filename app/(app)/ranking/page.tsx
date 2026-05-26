@@ -1,7 +1,7 @@
 import { Podium } from "@/components/ranking/Podium"
 import { RankingTable } from "@/components/ranking/RankingTable"
 import { UserHighlight } from "@/components/ranking/UserHighlight"
-import { getRankingEntries } from "@/lib/ranking"
+import { getRankingEntries } from "@/lib/queries/ranking"
 import { createServerClient } from "@/lib/supabase/server"
 
 export const revalidate = 60
@@ -52,6 +52,10 @@ export default async function RankingPage() {
       {error && isAdmin ? (
         <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-100">
           Não foi possível carregar o ranking. Verifique perfis, palpites e jogos no Supabase.
+        </div>
+      ) : error ? (
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100">
+          Não foi possível carregar o ranking no momento. Tente novamente em instantes.
         </div>
       ) : null}
 

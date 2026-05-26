@@ -25,7 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { getRankingEntries } from "@/lib/ranking"
+import { getRankingEntries } from "@/lib/queries/ranking"
 
 export default async function AppLayout({
   children
@@ -194,13 +194,13 @@ function AdminControlLink({
   label: string
 }) {
   return (
-    <a
+    <Link
       href={href}
       className="inline-flex h-9 shrink-0 items-center gap-2 rounded-md border border-transparent px-3 text-sm font-semibold text-[var(--text-secondary)] transition-colors hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]"
     >
       {icon}
       {label}
-    </a>
+    </Link>
   )
 }
 

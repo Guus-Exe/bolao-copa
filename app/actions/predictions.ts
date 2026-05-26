@@ -7,10 +7,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin"
 import { createServerClient } from "@/lib/supabase/server"
 import { predictionSchema } from "@/lib/validations"
 import type { Prediction } from "@/types"
-
-type ActionResult<T = void> =
-  | { success: true; data: T; error?: never }
-  | { success: false; error: string; data?: never }
+import type { ActionResult } from "@/types"
 
 
 export async function savePrediction(

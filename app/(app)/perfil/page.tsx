@@ -4,7 +4,7 @@ import { AccountInfo } from "@/components/profile/AccountInfo"
 import { ProfileAvatarForm } from "@/components/profile/ProfileAvatarForm"
 import { ProfileStats } from "@/components/profile/ProfileStats"
 import { UsernameForm } from "@/components/profile/UsernameForm"
-import { getRankingEntries } from "@/lib/ranking"
+import { getRankingEntries } from "@/lib/queries/ranking"
 import { createServerClient } from "@/lib/supabase/server"
 
 export const revalidate = 0

@@ -62,13 +62,15 @@ export async function updateSession(request: NextRequest) {
 
   // Proteção de rotas admin
   if (user && request.nextUrl.pathname.startsWith('/admin')) {
-    const { data: profile } = await supabase
+    const { data: profileData } = await supabase
       .from('profiles')
       .select('is_admin')
       .eq('id', user.id)
       .single()
 
-    if (!profile || !(profile as any).is_admin) {
+    const profile = profileData as { is_admin: boolean } | null
+
+    if (!profile || !profile.is_admin) {
       const url = request.nextUrl.clone()
       url.pathname = '/dashboard'
       return NextResponse.redirect(url)
