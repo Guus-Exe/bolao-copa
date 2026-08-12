@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next"
 import { Bebas_Neue, Inter } from "next/font/google"
 import { BackToTop } from "@/components/ui/back-to-top"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
 import "./globals.css"
@@ -38,6 +39,7 @@ export default function RootLayout({
       <body className="min-h-screen font-[family-name:var(--font-body)]">
         {children}
         <BackToTop />
+        <ThemeToggle />
         <SpeedInsights />
       </body>
     </html>

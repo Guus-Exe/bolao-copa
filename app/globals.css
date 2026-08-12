@@ -45,6 +45,44 @@
     --border-strong: rgba(34, 197, 94, 0.2);
     --border-hover: rgba(34, 197, 94, 0.4);
   }
+
+  /* ponytail: tema usa var(--*) em todo app -> modo claro = sobrescreve vars, nao reescreve componentes */
+  .light {
+    --background: 150 20% 97%;
+    --foreground: 150 40% 12%;
+    --card: 150 20% 100%;
+    --card-foreground: 150 40% 12%;
+    --popover: 150 20% 100%;
+    --popover-foreground: 150 40% 12%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 48 96% 53%;
+    --secondary-foreground: 0 0% 20%;
+    --muted: 138 20% 90%;
+    --muted-foreground: 142 30% 30%;
+    --accent: 138 24% 90%;
+    --accent-foreground: 150 40% 12%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 142 40% 60%;
+    --input: 138 24% 88%;
+    --ring: 142 71% 45%;
+
+    --bg-base: #f4f7f4;
+    --bg-surface: #fafcf7;
+    --bg-elevated: #ffffff;
+    --text-primary: #0a2f1a;
+    --text-secondary: #16703a;
+    --text-muted: #2e7d4f;
+    --success: #16a34a;
+    --error: #dc2626;
+    --warning: #eab308;
+    --landing-border: rgba(22, 163, 74, 0.2);
+    --border-strong: rgba(22, 163, 74, 0.2);
+    --border-hover: rgba(22, 163, 74, 0.4);
+    --green-glow: rgba(22, 163, 74, 0.08);
+    --yellow-glow: rgba(234, 179, 8, 0.08);
+  }
 }
 
 @layer base {
